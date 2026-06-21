@@ -1,0 +1,75 @@
+@startuml
+title Inventory Optimization System - Class Diagram
+
+class InventoryOptimizationSystem {
+  + forecastDemand()
+  + replenishInventory()
+  + trackOrder()
+  + evaluateSupplierPerformance()
+}
+
+class InventoryItem {
+  - itemId: int
+  - description: String
+  - currentStockLevel: int
+  - leadTime: int
+  + updateStockLevel()
+}
+
+class Supplier {
+  - supplierId: int
+  - telephoneNumber: String
+  - contactInformation: String
+  - productCatalogue: String
+  - leadTimeCommitments: String
+  + supplyItems()
+  + evaluatePerformance()
+}
+
+class DemandForecast {
+  - forecastId: int
+  - forecastedQuantity: int
+  - timeframe: String
+  + predictDemand()
+}
+
+class Order {
+  - orderNumber: int
+  - orderDate: Date
+  - orderQuantity: int
+  + processOrder()
+  + trackOrder()
+}
+
+class Shipment {
+  - shipmentNumber: int
+  - timestamp: DateTime
+  - trackingInformation: String
+  + trackShipment()
+}
+
+class SupplierPerformance {
+  - performanceId: int
+  - deliveryAccuracy: double
+  - leadTimePerformance: double
+  - reliabilityScore: double
+  + evaluateSupplier()
+}
+
+InventoryOptimizationSystem "1" -- "many" InventoryItem : manages
+InventoryOptimizationSystem "1" -- "many" Supplier : manages
+InventoryOptimizationSystem "1" -- "many" Order : processes
+InventoryOptimizationSystem "1" -- "many" Shipment : tracks
+
+Supplier "1" -- "many" InventoryItem : supplies
+InventoryItem "1" -- "many" DemandForecast : has
+DemandForecast "1" -- "many" Order : used for
+
+Order "1" -- "many" Shipment : creates
+Shipment "many" -- "1" Order : based on
+
+Supplier "1" -- "1" SupplierPerformance : evaluated by
+SupplierPerformance ..> Shipment : uses delivery data
+SupplierPerformance ..> Order : uses order data
+
+@enduml

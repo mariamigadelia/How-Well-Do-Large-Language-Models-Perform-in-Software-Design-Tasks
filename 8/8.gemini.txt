@@ -1,0 +1,105 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam monochrome true
+left to right direction
+
+title Train Composition System - Class Diagram
+
+' --- Abstract Base & Core Components ---
+
+abstract class Train {
+    - trainId: String
+    + getLocomotiveCount(): Integer
+}
+
+class Locomotive {
+    - locomotiveId: String
+    - powerRating: Double
+}
+
+abstract class Carriage {
+    - carriageId: String
+    - weight: Double
+}
+
+' --- Specialized Carriages ---
+
+class FreightCar {
+    - cargoCapacityVolume: Double
+    - maxPayloadWeight: Double
+}
+
+class PassengerCoach {
+    + toggleAirConditioning(): Void
+}
+
+class DiningCar {
+    - seatingCapacity: Integer
+}
+
+' --- Internal Coach Components ---
+
+class BigRoom {
+    - seatCount: Integer
+}
+
+class Compartment {
+    - compartmentNumber: Integer
+    - seatCount: Integer
+}
+
+class AirConditioner {
+    - isOn: Boolean
+    - maxAmbientTemperature: Double
+    + turnOn(): Void
+    + turnOff(): Void
+    + getMaxTemperature(): Double
+}
+
+' --- Specialized Train Classifications ---
+
+class FreightTrain {
+}
+
+class PassengerTrain {
+}
+
+' --- Relationships & Multiplicities ---
+
+' Inheritance Hierarchies
+Train <|-- FreightTrain
+Train <|-- PassengerTrain
+
+Carriage <|-- FreightCar
+Carriage <|-- PassengerCoach
+Carriage <|-- DiningCar
+
+' Locomotive Rule: Every train has exactly 1 or 2 locomotives
+Train "1" *-- "1..2" Locomotive : pulled by >
+
+' Freight Train Rule: Carriages are ONLY freight cars
+FreightTrain "1" *-- "1..*" FreightCar : consists of >
+
+' Passenger Train Rule: At least 1 passenger coach, max 1 dining car
+PassengerTrain "1" *-- "1..*" PassengerCoach : contains >
+PassengerTrain "1" *-- "0..1" DiningCar : contains >
+
+' Passenger Coach Structural Composition
+PassengerCoach "1" *-- "0..1" BigRoom : contains >
+PassengerCoach "1" *-- "1..*" Compartment : contains >
+PassengerCoach "1" *-- "1" AirConditioner : equipped with >
+
+note top of Train
+  <b>Locomotive Constraint:</b>
+  Applies globally to all trains. 
+  Each train must have 1 or 2 locomotives.
+end note
+
+note bottom of PassengerCoach
+  <b>Coach Constraints:</b>
+  - Up to one Big Room (0..1)
+  - One or more Compartments (1..*)
+  - Exactly one Air Conditioner (1)
+end note
+
+@endum

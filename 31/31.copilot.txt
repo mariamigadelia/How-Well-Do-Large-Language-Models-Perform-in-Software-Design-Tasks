@@ -1,0 +1,80 @@
+@startuml
+title Bank Communication Preference Management System Class Diagram
+
+' ==================== CUSTOMER ====================
+class Customer {
+  - customerID : String
+  - name : String
+  - surname : String
+  - email : String
+  - phoneNumber : String
+  - address : String
+  + setPreferences(p : CommunicationPreference) : void
+}
+
+' ==================== COMMUNICATION PREFERENCE ====================
+enum PreferenceType {
+  EMAIL
+  SMS
+}
+
+class CommunicationPreference {
+  - preferenceID : String
+  - type : PreferenceType
+  - isEnabled : boolean
+  + applyPreference() : void
+}
+
+Customer "1" --> "1" CommunicationPreference : selects >
+
+' ==================== PLATFORM ====================
+enum PlatformType {
+  ANDROID
+  IOS
+  WEB
+}
+
+class OnlineBankingSystem {
+  - systemID : String
+  - platform : PlatformType
+  + createAccount() : void
+  + accessAccountsMenu() : void
+}
+
+class AccountsMenu {
+  - menuID : String
+  + openSetPreferencesTab() : void
+}
+
+OnlineBankingSystem --> AccountsMenu : contains >
+AccountsMenu --> CommunicationPreference : manages >
+
+' ==================== COMMUNICATION CHANNELS ====================
+class EmailService {
+  + sendEmail(c : Customer, msg : String) : void
+}
+
+class SMSService {
+  + sendSMS(c : Customer, msg : String) : void
+}
+
+CommunicationPreference --> EmailService : ifEmailSelected >
+CommunicationPreference --> SMSService : ifSMSSelected >
+
+' ==================== INFORMATION MESSAGE ====================
+class InfoMessage {
+  - messageID : String
+  - content : String
+  + displayMessage() : void
+}
+
+AccountsMenu --> InfoMessage : shows >
+
+' ==================== DATABASE ====================
+class PreferenceDatabase {
+  + storePreference(c : Customer, p : CommunicationPreference) : void
+}
+
+CommunicationPreference --> PreferenceDatabase : storedIn >
+
+@enduml

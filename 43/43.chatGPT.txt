@@ -1,0 +1,223 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+class Supermarket {
+  -name: String
+  +organizeProducts()
+  +recordProductOnShelf()
+}
+
+class Product {
+  -productId: String
+  -name: String
+  -type: ProductType
+  -expiryDate: Date
+  -price: double
+  -storageLocation: StorageLocation
+  -ingredients: String
+}
+
+enum ProductType {
+  ALIMENTATION
+  PASTRY_BAKERY
+  BUTCHER
+  OTHER
+}
+
+enum StorageLocation {
+  SHELF
+  COLD_CHAMBER
+  FREEZER
+}
+
+class ProductGroup {
+  -groupName: String
+  -continent: String
+}
+
+class StockForm {
+  -formId: String
+  -recordedQuantity: int
+  -actualQuantity: int
+  +verifyQuantity(): boolean
+}
+
+class Inventory {
+  +recordPurchase(product: Product, quantity: int)
+  +countProducts(product: Product): int
+  +verifyStock()
+}
+
+abstract class Customer {
+  -customerId: String
+  -name: String
+  -customerType: String
+  +collectProduct(product: Product, quantity: int)
+  +checkProductInfo(product: Product)
+}
+
+class NormalCustomer
+class ExtraCustomer
+
+class Basket {
+  -basketId: String
+  +addItem(product: Product, quantity: int)
+  +removeItem(product: Product)
+}
+
+class BasketItem {
+  -quantity: int
+}
+
+class Employee {
+  -employeeId: String
+  -name: String
+  +orientCustomer(customer: Customer, product: Product)
+}
+
+class Cashier {
+  +scanProduct(productId: String, quantity: int)
+  +processPayment(payment: Payment)
+  +printInvoice()
+}
+
+class ChiefOfStore {
+  +checkInventory()
+}
+
+abstract class Payment {
+  -amount: double
+  -paymentDate: Date
+  +pay()
+}
+
+class CashPayment {
+  -cashReceived: double
+}
+
+class CardPayment {
+  -bankCardNumber: String
+}
+
+class Invoice {
+  -invoiceId: String
+  -date: Date
+  -totalAmount: double
+}
+
+class Order {
+  -orderId: String
+  -status: OrderStatus
+}
+
+class OrderItem {
+  -quantity: int
+}
+
+enum OrderStatus {
+  RECEIVED
+  PREPARING
+  PACKAGED
+  VERIFIED
+  COMPLETED
+  CANCELLED
+}
+
+class ChiefOfOrder {
+  +receiveOrder(order: Order)
+  +verifyOrder(order: Order, invoice: ProformaInvoice)
+}
+
+class BakeryPastryAgent {
+  +prepareGoods(order: Order)
+  +packageGoods(order: Order)
+}
+
+class Controller {
+  +checkDelivery(delivery: Delivery)
+  +detectDiscrepancy()
+}
+
+class Delivery {
+  -deliveryId: String
+  -status: DeliveryStatus
+}
+
+enum DeliveryStatus {
+  STARTED
+  IN_PROGRESS
+  CHECKED
+  DELIVERED
+}
+
+class ProformaInvoice {
+  -proformaId: String
+  -date: Date
+  -stump: String
+  -original: String
+}
+
+class GeneralDirectorOffice {
+  +receiveDocuments(invoice: ProformaInvoice)
+}
+
+Supermarket *-- Inventory
+Supermarket o-- ProductGroup
+Supermarket o-- Employee
+Employee <|-- Cashier
+Employee <|-- ChiefOfStore
+Employee <|-- ChiefOfOrder
+Employee <|-- BakeryPastryAgent
+Employee <|-- Controller
+
+ProductGroup "1" o-- "0..*" Product
+Inventory "1" *-- "0..*" StockForm
+StockForm "1" --> "1" Product
+
+Customer <|-- NormalCustomer
+Customer <|-- ExtraCustomer
+Customer "1" *-- "1" Basket
+Basket "1" *-- "0..*" BasketItem
+BasketItem "*" --> "1" Product
+
+Cashier --> Invoice
+Cashier --> Payment
+Payment <|-- CashPayment
+Payment <|-- CardPayment
+Invoice "1" --> "0..*" BasketItem
+
+Order "1" *-- "1..*" OrderItem
+OrderItem "*" --> "1" Product
+ChiefOfOrder --> Order
+ChiefOfOrder --> ProformaInvoice
+BakeryPastryAgent --> Order
+
+Delivery "1" --> "1" Order
+Delivery "1" --> "1" ProformaInvoice
+Controller --> Delivery
+GeneralDirectorOffice --> ProformaInvoice
+
+Product --> ProductType
+Product --> StorageLocation
+Order --> OrderStatus
+Delivery --> DeliveryStatus
+
+note right of Inventory
+Physical inventory:
+each purchased product is
+recorded on a stock form.
+end note
+
+note right of Product
+Products are placed on shelves
+according to type and storage
+location requirements.
+end note
+
+note bottom of Delivery
+Delivery starts when the customer
+interacts with the service and ends
+when delivery is completed.
+end note
+
+@enduml

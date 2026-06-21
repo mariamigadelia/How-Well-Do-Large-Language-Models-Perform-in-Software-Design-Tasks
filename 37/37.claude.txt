@@ -1,0 +1,110 @@
+@startuml Personal Finance Management System
+
+skinparam classAttributeIconSize 0
+skinparam class {
+    BackgroundColor #F8F9FA
+    BorderColor #2C3E50
+    ArrowColor #2C3E50
+}
+
+' ==================== CLASSES ====================
+
+class FinanceManager {
+    - managerID : String
+    - ownerName : String
+    --
+    + trackExpenses() : void
+    + checkBudgetAdherence() : void
+    + managePortfolio() : void
+    + trackGoals() : void
+    + generateReport() : Report
+}
+
+class Account {
+    - accountID : String
+    - accountName : String
+    - accountType : String
+    - balance : double
+    --
+    + getBalance() : double
+    + updateBalance(amount : double) : void
+}
+
+class Income {
+    - incomeID : String
+    - source : String
+    - amount : double
+    - date : Date
+    --
+    + recordIncome() : void
+    + getAmount() : double
+}
+
+class Expense {
+    - expenseCode : String
+    - category : String
+    - amount : double
+    - date : Date
+    --
+    + recordExpense() : void
+    + getCategory() : String
+    + getAmount() : double
+}
+
+class Budget {
+    - budgetID : String
+    - category : String
+    - spendingLimit : double
+    - actualSpent : double
+    --
+    + setLimit(limit : double) : void
+    + trackSpending(amount : double) : void
+    + getRemaining() : double
+    + isExceeded() : boolean
+}
+
+class Investment {
+    - investmentID : String
+    - assetAllocation : String
+    - investmentValue : double
+    --
+    + updateValue(value : double) : void
+    + getCurrentValue() : double
+    + getPerformance() : double
+}
+
+class PerformanceRecord {
+    - recordID : String
+    - date : Date
+    - value : double
+    - returnRate : double
+    --
+    + getReturnRate() : double
+}
+
+class Goal {
+    - goalID : String
+    - goalName : String
+    - targetAmount : double
+    - currentAmount : double
+    --
+    + updateProgress(amount : double) : void
+    + getProgressPercentage() : double
+    + isAchieved() : boolean
+}
+
+' ==================== RELATIONSHIPS ====================
+
+FinanceManager "1" o-- "0..*" Account : manages >
+FinanceManager "1" o-- "0..*" Budget : maintains >
+FinanceManager "1" o-- "0..*" Investment : oversees >
+FinanceManager "1" o-- "0..*" Goal : pursues >
+
+Account "1" --> "0..*" Income : receives >
+Account "1" --> "0..*" Expense : pays >
+
+Budget "1" --> "0..*" Expense : tracks >
+
+Investment "1" *-- "0..*" PerformanceRecord : has history >
+
+@enduml

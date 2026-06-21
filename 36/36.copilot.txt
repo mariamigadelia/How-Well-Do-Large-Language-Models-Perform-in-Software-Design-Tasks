@@ -1,0 +1,66 @@
+@startuml
+title Travel Expense Management System Class Diagram
+
+' ==================== EMPLOYEE ====================
+class Employee {
+  - employeeID : String
+  - name : String
+  - contactInfo : String
+  - travelExpenseHistory : String
+  + submitExpenseReport(r : ExpenseReport) : void
+}
+
+' ==================== EXPENSE REPORT ====================
+class ExpenseReport {
+  - reportID : String
+  - expenseCategory : String
+  - receipt : String
+  + createReport() : void
+}
+
+Employee "1" --> "*" ExpenseReport : submits >
+
+' ==================== APPROVAL ====================
+class Approval {
+  - approvalCode : String
+  - approvalStatus : String
+  + approveReport(r : ExpenseReport) : void
+}
+
+ExpenseReport "1" --> "1" Approval : requires >
+
+' ==================== REIMBURSEMENT ====================
+class Reimbursement {
+  - reimbursementID : String
+  - reimbursementAmount : double
+  - processingDate : Date
+  + processReimbursement(a : Approval) : void
+}
+
+Approval "1" --> "1" Reimbursement : leadsTo >
+
+' ==================== ANALYTICS ====================
+class ExpenseAnalytics {
+  + trackBudget() : void
+  + analyseExpenseCategories() : void
+  + generateReports() : void
+}
+
+ExpenseAnalytics --> ExpenseReport : analyses >
+ExpenseAnalytics --> Employee : evaluates >
+
+' ==================== SYSTEM ====================
+class TravelExpenseSystem {
+  + recordExpenseReport(r : ExpenseReport) : void
+  + manageApproval(a : Approval) : void
+  + processReimbursement(r : Reimbursement) : void
+  + runAnalytics() : void
+}
+
+TravelExpenseSystem --> Employee : manages >
+TravelExpenseSystem --> ExpenseReport : records >
+TravelExpenseSystem --> Approval : handles >
+TravelExpenseSystem --> Reimbursement : processes >
+TravelExpenseSystem --> ExpenseAnalytics : supports >
+
+@enduml

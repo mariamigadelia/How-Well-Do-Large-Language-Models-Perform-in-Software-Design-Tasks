@@ -1,0 +1,69 @@
+@startuml AcademicProgramDiagram
+
+class AcademicProgram {
+    - programNumber : int
+    - name : String
+    --
+    + addCourse(c : Course) : void
+    + removeCourse(c : Course) : void
+}
+
+class Course {
+    - courseName : String
+    - courseCode : String
+    - startTime : Time
+    - endTime : Time
+    - days : String[]
+    - quotaLimit : int
+    --
+    + getSchedule() : String
+}
+
+class Classroom {
+    - classId : String
+    - capacity : int
+    - floor : int
+    - block : String
+}
+
+class Instructor {
+    - name : String
+    - surname : String
+    - title : String
+    - specialty : String
+    --
+    + lecture(s : Student) : void
+    + mentor(s : Student) : void
+    + increaseQuota(c : Course) : void
+    + decreaseQuota(c : Course) : void
+    + changeWeeklyHours(c : Course) : void
+    + changeCourseDays(c : Course) : void
+    + addCourse(c : Course) : void
+    + dropCourse(c : Course) : void
+}
+
+class Student {
+    - studentNumber : int
+    - name : String
+    - major : String
+    --
+    + enroll(c : Course) : void
+    + dropCourse(c : Course) : void
+    + receiveTranscript() : Transcript
+    + requestDocument() : Document
+    + conductSurvey() : void
+}
+
+' ---------------- Relationships ----------------
+
+AcademicProgram "1" *-- "many" Course : contains >
+
+Course "many" --> "1" Classroom : held in >
+
+Course "many" --> "1..*" Instructor : taught by >
+
+Instructor "1..*" -- "many" Student : lectures / mentors >
+
+Student "many" --> "many" Course : enrolls in >
+
+@enduml

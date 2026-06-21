@@ -1,0 +1,68 @@
+@startuml
+title Personal Finance Management System Class Diagram
+
+' ==================== INCOME ====================
+class Income {
+  - incomeID : String
+  - source : String
+  - amount : double
+  - date : Date
+  - referenceAccount : String
+  + recordIncome() : void
+}
+
+' ==================== EXPENSE ====================
+class Expense {
+  - expenseCode : String
+  - category : String
+  - amount : double
+  - date : Date
+  - referenceAccount : String
+  + recordExpense() : void
+}
+
+' ==================== BUDGET ====================
+class Budget {
+  - budgetID : String
+  - category : String
+  - limit : double
+  - actualSpent : double
+  + trackSpending(exp : Expense) : void
+  + checkAdherence() : boolean
+}
+
+Budget "1" --> "*" Expense : monitors >
+
+' ==================== INVESTMENT ====================
+class Investment {
+  - investmentID : String
+  - assetAllocations : String
+  - investmentValue : double
+  - historicalPerformance : String
+  + managePortfolio() : void
+}
+
+' ==================== GOAL ====================
+class Goal {
+  - goalID : String
+  - targetAmount : double
+  - progress : double
+  + trackProgress() : void
+}
+
+' ==================== SYSTEM ====================
+class FinanceManagementSystem {
+  + trackIncome(i : Income) : void
+  + trackExpense(e : Expense) : void
+  + manageBudget(b : Budget) : void
+  + manageInvestment(inv : Investment) : void
+  + trackGoal(g : Goal) : void
+}
+
+FinanceManagementSystem --> Income : records >
+FinanceManagementSystem --> Expense : tracks >
+FinanceManagementSystem --> Budget : manages >
+FinanceManagementSystem --> Investment : manages >
+FinanceManagementSystem --> Goal : tracks >
+
+@enduml

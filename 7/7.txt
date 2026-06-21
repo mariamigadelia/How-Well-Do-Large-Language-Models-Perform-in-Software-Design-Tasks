@@ -1,0 +1,7 @@
+Generate plantUML code for a class diagram satisfying the following requirements:
+A timber-framed house consists of 5 to 10 wooden logs, 200 to 400 adobe (clay) bricks, and 1,000 to 2,000 nails.
+Each building material—whether a wooden log, adobe brick, or nail—is part of exactly one timber-framed house.
+Each timber-framed house has a specific number of rooms and floors (stories).
+For the construction of a timber-framed house, at least one carpenter is responsible. Each carpenter has a name and an individual hourly wage.
+To build the timber-framed house, each carpenter uses their own tools, consisting of exactly one hammer and exactly one saw.
+Each carpenter can work on at most one timber-framed house at a time.

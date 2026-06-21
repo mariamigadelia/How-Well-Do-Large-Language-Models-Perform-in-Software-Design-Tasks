@@ -1,0 +1,218 @@
+@startuml Supermarket_System
+
+' ==================== ENUMERATIONS ====================
+enum ProductType {
+  ALIMENTATION
+  PASTRY_BAKERY
+  BUTCHER
+}
+
+enum StorageLocation {
+  SHELF
+  COLD_CHAMBER
+  FREEZER
+}
+
+enum CustomerType {
+  NORMAL
+  EXTRA
+}
+
+enum OrderStatus {
+  PENDING
+  PREPARED
+  VERIFIED
+  COMPLETED
+}
+
+enum DeliveryStatus {
+  IN_PROGRESS
+  COMPLETED
+}
+
+enum PaymentMethod {
+  CASH
+  CARD
+}
+
+' ==================== PRODUCT ====================
+class Product {
+  - productID : String
+  - name : String
+  - type : ProductType
+  - expiryDate : Date
+  - price : double
+  - storageLocation : StorageLocation
+  + checkExpiry() : boolean
+  + getPrice() : double
+}
+
+' ==================== STOCK / INVENTORY ====================
+class Stock {
+  - stockID : String
+  + recordProduct(p : Product, qty : int) : void
+  + verifyCount() : boolean
+}
+
+class StockForm {
+  - formID : String
+  - quantity : int
+  + getQuantity() : int
+}
+
+' ==================== PEOPLE ====================
+abstract class Person {
+  - id : String
+  - name : String
+}
+
+abstract class Customer {
+  - customerID : String
+  - name : String
+  - type : CustomerType
+  + chooseProducts() : void
+  + checkProductInfo() : void
+  + proceedToCashier() : void
+}
+
+class NormalCustomer
+class ExtraCustomer
+
+class Employee {
+  - employeeID : String
+  - name : String
+  + orientCustomer(c : Customer) : void
+  + placeProductOnShelf(p : Product) : void
+}
+
+class Cashier {
+  - cashierID : String
+  + scanProduct(p : Product, qty : int) : void
+  + processPayment(pay : Payment) : void
+  + provideInvoice() : Invoice
+}
+
+class ChiefOfStore {
+  - chiefID : String
+  + checkProductCount() : void
+}
+
+class ChiefOfOrder {
+  - chiefID : String
+  + sendOrder(o : Order) : void
+  + verifyOrder(o : Order, pi : ProformaInvoice) : boolean
+}
+
+class BakeryPastryAgent {
+  - agentID : String
+  + prepareGoods(o : Order) : void
+  + packageGoods(o : Order) : void
+}
+
+class Controller {
+  - controllerID : String
+  + checkDelivery(d : Delivery) : void
+}
+
+class GeneralDirector {
+  - directorID : String
+}
+
+class Supplier {
+  - supplierID : String
+  - name : String
+  + supplyProducts() : void
+}
+
+' ==================== SHOPPING ====================
+class Basket {
+  - basketID : String
+  + addProduct(p : Product) : void
+  + removeProduct(p : Product) : void
+}
+
+' ==================== PAYMENT ====================
+abstract class Payment {
+  - paymentID : String
+  - amount : double
+  - method : PaymentMethod
+  + process() : void
+}
+
+class CashPayment {
+  - cashGiven : double
+  + giveCash() : void
+}
+
+class CardPayment {
+  - cardNumber : String
+  + presentCard() : void
+}
+
+class Invoice {
+  - invoiceID : String
+  - totalAmount : double
+  - date : Date
+}
+
+' ==================== ORDER & DELIVERY ====================
+class Order {
+  - orderID : String
+  - quantity : int
+  - status : OrderStatus
+}
+
+class Delivery {
+  - deliveryID : String
+  - status : DeliveryStatus
+  + startDelivery() : void
+  + completeDelivery() : void
+}
+
+class ProformaInvoice {
+  - proformaID : String
+  - stump : String
+  + transferToDirector() : void
+}
+
+' ==================== INHERITANCE ====================
+Person <|-- Customer
+Person <|-- Employee
+Customer <|-- NormalCustomer
+Customer <|-- ExtraCustomer
+Employee <|-- Cashier
+Employee <|-- ChiefOfStore
+Employee <|-- ChiefOfOrder
+Employee <|-- BakeryPastryAgent
+Employee <|-- Controller
+
+Payment <|-- CashPayment
+Payment <|-- CardPayment
+
+' ==================== ASSOCIATIONS ====================
+Stock "1" o-- "*" StockForm : maintains >
+StockForm "1" --> "1" Product : records >
+Supplier "1" --> "*" Product : supplies >
+ChiefOfStore "1" ..> "*" StockForm : counts >
+
+Customer "1" --> "1" Basket : uses >
+Basket "1" o-- "*" Product : contains >
+
+Cashier "1" --> "*" Payment : processes >
+Cashier "1" --> "*" Invoice : provides >
+Customer "1" --> "*" Payment : makes >
+Payment "1" --> "0..1" Invoice : generates >
+
+Employee "1" ..> "*" Customer : orients >
+Employee "1" ..> "*" Product : placesOnShelf >
+
+Order "1" o-- "*" Product : includes >
+ChiefOfOrder "1" --> "*" Order : sends >
+BakeryPastryAgent "1" ..> "*" Order : prepares >
+ChiefOfOrder "1" ..> "*" ProformaInvoice : verifiesAgainst >
+
+Delivery "1" --> "1" Order : delivers >
+Controller "1" ..> "*" Delivery : checks >
+ProformaInvoice "1" --> "1" GeneralDirector : transferredTo >
+
+@enduml

@@ -1,0 +1,55 @@
+@startuml
+title Ship System Class Diagram
+
+abstract class Ship {
+    -name : String
+    +getName() : String
+}
+
+class PassengerShip {
+    -restaurants : List<Restaurant>
+    +addRestaurant(restaurant : Restaurant)
+}
+
+class ContainerShip {
+    -capacity : int
+    +getCapacity() : int
+}
+
+class Restaurant {
+    -name : String
+    -seats : int
+    +getSeats() : int
+}
+
+class DieselEngine {
+    -engineId : String
+    -cylinders : List<Cylinder>
+    +addCylinder(cylinder : Cylinder)
+}
+
+class Cylinder {
+    -cylinderId : String
+    -valves : List<Valve>
+    -combustionChamber : CombustionChamber
+    +addValve(valve : Valve)
+}
+
+class Valve {
+    -valveType : String
+}
+
+class CombustionChamber {
+    -volume : float
+}
+
+' Relationships
+Ship <|-- PassengerShip
+Ship <|-- ContainerShip
+PassengerShip --> Restaurant : has
+Ship --> DieselEngine : has at least one
+DieselEngine --> Cylinder : comprises
+Cylinder --> Valve : has
+Cylinder --> CombustionChamber : contains
+
+@enduml

@@ -1,0 +1,80 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam monochrome true
+left to right direction
+
+title Ship Propulsion and Facility - Class Diagram
+
+' --- Abstract Base Class ---
+abstract class Ship {
+    - shipId: String
+    - name: String
+    - deadweightTonnage: Double
+}
+
+' --- Specialized Ships ---
+class PassengerShip {
+    - maxPassengerCapacity: Integer
+}
+
+class ContainerShip {
+    - maxTEU: Integer
+}
+
+' --- Ship Internal Components ---
+class Restaurant {
+    - name: String
+    - numberOfSeats: Integer
+}
+
+class DieselEngine {
+    - engineId: String
+    - horsepower: Double
+}
+
+class Cylinder {
+    - cylinderId: Integer
+    - boreSize: Double
+}
+
+class Valve {
+    - valveType: String
+}
+
+class CombustionChamber {
+    - volume: Double
+}
+
+' --- Relationships & Multiplicities ---
+
+' Inheritance
+Ship <|-- PassengerShip
+Ship <|-- ContainerShip
+
+' Propulsion Composition (Each ship has at least one engine)
+Ship "1" *-- "1..*" DieselEngine : propelled by >
+
+' Engine Architecture Compositions
+DieselEngine "1" *-- "2..*" Cylinder : comprises >
+Cylinder "1" *-- "1..*" Valve : has >
+Cylinder "1" *-- "1" CombustionChamber : has >
+
+' Passenger Ship Specific Facilities
+PassengerShip "1" o-- "1..*" Restaurant : features >
+
+note top of Ship
+  <b>Abstract Class:</b>
+  A generic ship cannot exist on its own; 
+  it must be specialized as a Passenger Ship 
+  or a Container Ship.
+end note
+
+note bottom of DieselEngine
+  <b>Composition (Black Diamond):</b>
+  Used because the engine owns the cylinders, 
+  which in turn own the valves and chambers. 
+  If the engine is destroyed, its component 
+  parts cease to exist contextually.
+end note
+
+@endum

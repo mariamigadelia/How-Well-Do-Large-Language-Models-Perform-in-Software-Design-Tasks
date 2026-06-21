@@ -1,0 +1,101 @@
+@startuml
+title University WatCard System - Class Diagram
+
+class WatCardSystem {
+  + grantAccess()
+  + processOnlineDeposit()
+  + processPayment()
+  + recordUsage()
+}
+
+class Student {
+  - studentNumber: int
+  - name: String
+  - email: String
+  - telephoneNumber: String
+  - major: String
+  - cardValidity: String
+}
+
+class WatCard {
+  - cardId: int
+  - cardNumber: String
+  - issueDate: Date
+  - expiryDate: Date
+  - status: String
+  + validateCard()
+}
+
+class DebitAccount {
+  - accountId: int
+  - balance: double
+  + depositMoney()
+  + withdrawMoney()
+}
+
+class OnlineDeposit {
+  - depositId: int
+  - amount: double
+  - depositDate: Date
+  - paymentMethod: String
+  + makeDeposit()
+}
+
+class UniversityFee {
+  - feeId: int
+  - feeType: String
+  - amount: double
+  - description: String
+}
+
+class Payment {
+  - paymentId: int
+  - paymentDate: Date
+  - amount: double
+  + processPayment()
+}
+
+class SecureArea {
+  - areaId: int
+  - areaName: String
+  - location: String
+  - accessLevel: String
+}
+
+class AccessRecord {
+  - accessId: int
+  - accessTime: DateTime
+  - accessStatus: String
+  + recordAccess()
+}
+
+class UsageRecord {
+  - usageId: int
+  - usageDateTime: DateTime
+  - usageType: String
+  - description: String
+  + createUsageRecord()
+}
+
+WatCardSystem "1" -- "many" Student : manages
+WatCardSystem "1" -- "many" WatCard : issues
+WatCardSystem "1" -- "many" SecureArea : controls access to
+WatCardSystem "1" -- "many" UsageRecord : keeps
+
+Student "1" -- "1" WatCard : holds
+WatCard "1" -- "1" DebitAccount : linked to
+
+DebitAccount "1" -- "many" OnlineDeposit : receives
+DebitAccount "1" -- "many" Payment : used for
+
+Payment "many" -- "1" UniversityFee : pays
+WatCard "1" -- "many" Payment : authorizes
+WatCard "1" -- "many" AccessRecord : creates
+
+AccessRecord "many" -- "1" SecureArea : for
+UsageRecord "many" -- "1" WatCard : records use of
+UsageRecord ..> Payment : may record
+UsageRecord ..> AccessRecord : may record
+UsageRecord ..> OnlineDeposit : may record
+
+@enduml

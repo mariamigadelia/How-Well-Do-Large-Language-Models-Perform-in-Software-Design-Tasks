@@ -1,0 +1,2 @@
+Generate plantUML code for a class diagram satisfying the following requirements:
+A freight train is a train whose carriages are only freight cars. The cars of a passenger train are at least one passenger coach and a maximum of one dining car. Each train has one or two locomotives. Coaches are composed of up to one big room and one or more compartments. Each coach has air conditioning which can be turned on or off. Each air conditioner can only be operated up to a specified maximum ambient temperature.

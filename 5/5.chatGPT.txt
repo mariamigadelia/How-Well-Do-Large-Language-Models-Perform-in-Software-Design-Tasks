@@ -1,0 +1,162 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+class AddressBookApplication {
+  -currentWindow: AddressBookWindow
+  +newAddressBook()
+  +openAddressBook()
+  +quit()
+}
+
+class AddressBookWindow {
+  -title: String
+  -filePath: String
+  -isModified: boolean
+  +setTitle(title: String)
+  +markModified()
+  +confirmSaveChanges(): boolean
+  +close()
+}
+
+class FileMenu {
+  +newFile()
+  +openFile()
+  +closeFile()
+  +saveFile()
+  +saveAsFile()
+  +quit()
+}
+
+class AddressBookController {
+  -addressBook: AddressBook
+  -fileManager: FileManager
+  +createNew()
+  +open(path: String)
+  +close()
+  +save()
+  +saveAs(path: String)
+  +addEntry(entry: AddressEntry)
+  +editEntry(name: PersonName, newInfo: ContactInfo)
+  +deleteEntry(name: PersonName)
+  +sortByName()
+  +sortByZip()
+  +printMailingLabels()
+}
+
+class AddressBook {
+  -entries: List<AddressEntry>
+  +addEntry(entry: AddressEntry)
+  +editEntry(name: PersonName, info: ContactInfo)
+  +deleteEntry(name: PersonName)
+  +findEntry(name: PersonName): AddressEntry
+  +sort(comparator: EntryComparator)
+  +getEntries(): List<AddressEntry>
+}
+
+class AddressEntry {
+  -name: PersonName
+  -contactInfo: ContactInfo
+  +updateContactInfo(info: ContactInfo)
+  +toMailingLabel(): MailingLabel
+}
+
+class PersonName {
+  -firstName: String
+  -lastName: String
+}
+
+class ContactInfo {
+  -address: String
+  -city: String
+  -state: String
+  -zipCode: String
+  -phoneNumber: String
+}
+
+interface EntryComparator {
+  +compare(a: AddressEntry, b: AddressEntry): int
+}
+
+class NameComparator {
+  +compare(a: AddressEntry, b: AddressEntry): int
+}
+
+class ZipComparator {
+  +compare(a: AddressEntry, b: AddressEntry): int
+}
+
+class FileManager {
+  +open(path: String): AddressBook
+  +save(addressBook: AddressBook, path: String)
+  +saveAs(addressBook: AddressBook, path: String)
+  +close(addressBook: AddressBook)
+}
+
+class SavePrompt {
+  +askToSaveChanges(): SaveChoice
+}
+
+class MailingLabel {
+  -text: String
+  +format(): String
+}
+
+class MailingLabelPrinter {
+  +print(entries: List<AddressEntry>)
+}
+
+enum SaveChoice {
+  SAVE
+  DONT_SAVE
+  CANCEL
+}
+
+AddressBookApplication *-- AddressBookWindow
+AddressBookApplication --> FileMenu
+AddressBookWindow *-- AddressBookController
+AddressBookController *-- AddressBook
+AddressBookController *-- FileManager
+AddressBookController *-- SavePrompt
+AddressBookController *-- MailingLabelPrinter
+
+AddressBook *-- AddressEntry
+AddressEntry *-- PersonName
+AddressEntry *-- ContactInfo
+AddressEntry --> MailingLabel
+
+EntryComparator <|.. NameComparator
+EntryComparator <|.. ZipComparator
+AddressBook --> EntryComparator
+SavePrompt --> SaveChoice
+MailingLabelPrinter --> MailingLabel
+
+FileMenu --> AddressBookController
+
+note right of PersonName
+Person's name is not editable.
+Only contact information can change.
+end note
+
+note right of NameComparator
+Sort by last name.
+If equal, sort by first name.
+end note
+
+note right of ZipComparator
+Sort by ZIP code.
+If equal, sort by last name,
+then first name.
+end note
+
+note bottom of AddressBookWindow
+Tracks current file path and modified state.
+New files are titled "Untitled".
+Save on Untitled becomes Save As.
+end note
+
+note bottom of AddressBookApplication
+Initial version supports one address book.
+Future extension can support multiple windows.
+end note
+
+@enduml

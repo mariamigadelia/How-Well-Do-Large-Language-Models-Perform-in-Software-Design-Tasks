@@ -1,0 +1,76 @@
+@startuml
+title Academic Program System Class Diagram
+
+' ==================== PROGRAM ====================
+class AcademicProgram {
+  - programNumber : String
+  - programName : String
+  + addCourse(c : Course) : void
+  + removeCourse(c : Course) : void
+}
+
+' ==================== COURSE ====================
+class Course {
+  - courseName : String
+  - courseCode : String
+  - startTime : Time
+  - endTime : Time
+  - daysOfCourse : String
+  - quotaLimit : int
+  + changeQuota(limit : int) : void
+  + changeCourseHours(start : Time, end : Time) : void
+  + changeCourseDays(days : String) : void
+}
+
+' ==================== CLASSROOM ====================
+class Classroom {
+  - classID : String
+  - capacity : int
+  - floor : int
+  - block : String
+}
+
+' ==================== INSTRUCTOR ====================
+class Instructor {
+  - name : String
+  - surname : String
+  - title : String
+  - specialty : String
+  + lectureCourse(c : Course) : void
+  + mentorStudent(s : Student) : void
+  + increaseQuota(c : Course) : void
+  + decreaseQuota(c : Course) : void
+  + addCourse(c : Course) : void
+  + dropCourse(c : Course) : void
+}
+
+' ==================== STUDENT ====================
+class Student {
+  - studentNumber : String
+  - name : String
+  - major : String
+  + enrollCourse(c : Course) : void
+  + dropCourse(c : Course) : void
+  + receiveTranscript() : Transcript
+  + requestDocument(docType : String) : Document
+  + conductSurvey(c : Course) : void
+}
+
+class Transcript {
+  - transcriptID : String
+  - details : String
+}
+
+class Document {
+  - documentID : String
+  - type : String
+}
+
+' ==================== RELATIONSHIPS ====================
+AcademicProgram "1" o-- "*" Course : contains >
+Course "1" --> "1" Classroom : heldIn >
+Course "*" --> "*" Instructor : taughtBy >
+Instructor "*" --> "*" Student : mentors >
+Student "*" --> "*" Course : enrolls >
+
+@enduml

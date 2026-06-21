@@ -1,0 +1,91 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam monochrome true
+left to right direction
+
+title Agricultural Export Management System - Class Diagram
+
+' --- Core Entity Classes ---
+
+class Company {
+    - companyId: String
+    - name: String
+    - address: String
+    - contactInfo: String
+    - certifications: List<String>
+    - exportLicenses: List<String>
+    + addOrder(order: Order): Void
+    + trackShipments(): List<Shipment>
+}
+
+class Commodity {
+    - commodityId: String
+    - name: String
+    - type: String
+    - description: String
+    - status: String
+    - qualityStandards: List<String>
+    - shelfLife: Integer
+}
+
+class Order {
+    - orderId: String
+    - date: Date
+    - quantity: Double
+    - destination: String
+    - status: String
+    + updateStatus(newStatus: String): Void
+}
+
+class Shipment {
+    - shipmentNumber: String
+    - date: Date
+    - route: String
+    - status: String
+    + updateRoute(currentRoute: String): Void
+    + updateStatus(newStatus: String): Void
+}
+
+class Document {
+    - documentId: String
+    - date: Date
+    - type: String
+    - shipmentDetails: String
+    + generateDocument(): Void
+}
+
+' --- Relationships & Multiplicities ---
+
+' A Company handles multiple commodities, orders, shipments, and documents.
+Company "1" -- "*" Commodity : handles >
+Company "1" -- "*" Order : places/manages >
+Company "1" -- "*" Shipment : tracks >
+Company "1" -- "*" Document : owns >
+
+' Orders are directly associated with a company and specific commodities
+Order "*" -- "1" Commodity : contains >
+
+' Shipment linkage to specific order and commodity
+Shipment "1" -- "1" Order : fulfills >
+Shipment "*" -- "1" Commodity : transports >
+
+' Documents are generated based on company, order, and shipment details
+Document "*" -- "1" Order : verifies >
+Document "*" -- "1" Shipment : references >
+
+note top of Company
+  <b>Central Entity:</b>
+  As required, the company serves as the 
+  operational hub, directly overseeing its 
+  commodities, orders, shipments, and documentation.
+end note
+
+note bottom of Document
+  <b>Traceability Matrix:</b>
+  Documents maintain references back to 
+  the Company, Order, and Shipment to 
+  ensure absolute paperwork accuracy 
+  for customs compliance.
+end note
+
+@endum

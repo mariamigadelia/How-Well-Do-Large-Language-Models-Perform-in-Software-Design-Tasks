@@ -1,0 +1,157 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam monochrome true
+left to right direction
+
+title Online Banking IPO Application System - Class Diagram
+
+' --- UI & Platform Layer ---
+
+abstract class InvestmentMenu {
+    + displayMenuOptions(): Void
+}
+
+class IPOApplicationTab {
+    - position: String = "END_OF_PAGE"
+    + render(): Void
+    + onApplyForIPOClick(): Void
+}
+
+interface OnlineBankingApp {
+    + openInvestmentMenu(): Void
+}
+
+class WebPlatform implements OnlineBankingApp {
+    - browserCompatibility: String
+}
+
+abstract class MobilePlatform implements OnlineBankingApp {
+    - osVersion: String
+}
+
+class AndroidApp extends MobilePlatform {
+    + executeAccountCreation(): Void
+}
+
+class iOSApp extends MobilePlatform {
+    + executeAccountCreation(): Void
+}
+
+class InfoSharingPopUp {
+    - message: String = "Your Name, Surname, Email, and Phone will be shared with the company."
+    + display(): Void
+    + acceptTerms(): Boolean
+}
+
+' --- Customer & Eligibility Domain ---
+
+abstract class Customer {
+    - id: String
+    - name: String
+    - surname: String
+    - email: String
+    - phoneNumber: String
+}
+
+class CorporateCustomer extends Customer {
+}
+
+class RetailCustomer extends Customer {
+    - hasUnpaidCreditCard: Boolean
+    - isBlockedAccount: Boolean
+    - isMarkedFraud: Boolean
+    - failedAttemptsCount: Integer
+    + isEligibleForIPO(): Boolean
+    + incrementFailedAttempts(): Void
+    + resetFailedAttemptsCount(): Void
+}
+
+class CallCentre {
+    + verifyIdentity(customerId: String): Boolean
+    + restoreIPOAccess(customer: RetailCustomer): Void
+}
+
+' --- IPO Application Domain ---
+
+enum ApplicationStatus {
+    PENDING
+    SUCCESSFUL_BANK_SUBMISSION
+    REJECTED_BY_COMPANY
+    APPROVED_BY_COMPANY
+}
+
+class IPOApplication {
+    - applicationId: String
+    - targetCompany: String
+    - numberOfSharesRequested: Integer
+    - amountToPay: Double
+    - status: ApplicationStatus
+    + processApplication(customer: RetailCustomer, doc: LegalDocumentation): Boolean
+    + handleCompanyResponse(isApproved: Boolean): Void
+}
+
+class LegalDocumentation {
+    - fileName: String
+    - fileFormat: String
+    - fileData: Blob
+    + isValidFormat(): Boolean
+}
+
+' --- Notification Engine ---
+
+class EmailService {
+    + sendHTMLNotification(recipientEmail: String, content: HTMLEmailContent): Void
+}
+
+class HTMLEmailContent {
+    - template: String = "In HTML Format"
+    - userName: String
+    - userSurname: String
+    - userEmail: String
+    - userPhone: String
+    - companyName: String
+    - sharesPurchased: Integer
+    - amountPaid: Double
+    + generateBody(): String
+}
+
+' --- Relationships & Multiplicities ---
+
+' UI Organization
+InvestmentMenu "1" *-- "1" IPOApplicationTab : contains as last item >
+IPOApplicationTab ..> InfoSharingPopUp : triggers >
+
+' Platform and Access
+OnlineBankingApp ..> InvestmentMenu : navigates >
+CallCentre ..> RetailCustomer : unblocks >
+
+' Customer Application Lifecycle
+RetailCustomer "1" -- "*" IPOApplication : submits >
+IPOApplication "1" *-- "1" LegalDocumentation : requires >
+IPOApplication ..> EmailService : triggers alerts through >
+EmailService ..> HTMLEmailContent : constructs >
+
+note top of RetailCustomer
+  <b>Eligibility Rules:</b>
+  isEligibleForIPO() returns true ONLY if:
+  - hasUnpaidCreditCard == false
+  - isBlockedAccount == false
+  - isMarkedFraud == false
+  - failedAttemptsCount < 5
+end note
+
+note bottom of LegalDocumentation
+  <b>Validation Rule:</b>
+  isValidFormat() enforces that fileFormat 
+  must strictly be ".pdf" or ".docx".
+  Throws validation UI error otherwise.
+end note
+
+note right of HTMLEmailContent
+  <b>HTML Email Content:</b>
+  Contains complete client details, company 
+  identity, final finalized shares count, 
+  and the structural payment amount.
+end note
+
+@endum

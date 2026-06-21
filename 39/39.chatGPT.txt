@@ -1,0 +1,80 @@
+@startuml
+title Donation Management System - Class Diagram
+
+class CharityOrganization {
+  - organizationId: int
+  - name: String
+  + recordDonation()
+  + generateReceipt()
+  + trackContribution()
+  + analyzeCampaign()
+}
+
+class Donor {
+  - donorId: int
+  - name: String
+  - email: String
+  - phone: String
+  - address: String
+  - demographics: String
+}
+
+class Donation {
+  - donationNumber: int
+  - timestamp: DateTime
+  - amount: double
+  + recordDonation()
+}
+
+class Receipt {
+  - receiptId: int
+  - timestamp: DateTime
+  - taxPurpose: boolean
+  + issueReceipt()
+}
+
+class Contribution {
+  - contributionId: int
+  - totalAmount: double
+  + updateTotalAmount()
+  + trackContribution()
+}
+
+class Campaign {
+  - campaignId: int
+  - campaignName: String
+  - startDate: Date
+  - endDate: Date
+  - goalAmount: double
+  - raisedAmount: double
+  + evaluatePerformance()
+}
+
+class CampaignAnalysis {
+  - analysisId: int
+  - performanceReport: String
+  - donorDemographics: String
+  - contributionTrends: String
+  + analyzePerformance()
+  + analyzeDonorDemographics()
+  + analyzeContributionTrends()
+}
+
+CharityOrganization "1" -- "many" Donation : records
+CharityOrganization "1" -- "many" Campaign : manages
+
+Donor "1" -- "many" Donation : makes
+Donor "1" -- "many" Contribution : has
+
+Donation "1" -- "1" Receipt : generates
+Donation "many" -- "1" Campaign : belongs to
+
+Contribution "many" -- "1" Donor : references
+Contribution "1" -- "many" Donation : includes
+
+Campaign "1" -- "1" CampaignAnalysis : analyzed by
+CampaignAnalysis ..> Donation : uses
+CampaignAnalysis ..> Contribution : uses
+CampaignAnalysis ..> Donor : evaluates
+
+@enduml

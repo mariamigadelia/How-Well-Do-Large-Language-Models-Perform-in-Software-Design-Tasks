@@ -1,0 +1,71 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam monochrome true
+left to right direction
+
+title Livestock Information Management System - Class Diagram
+
+' --- Core Domain Classes ---
+
+class Pen {
+    - penId: String
+    - capacity: Integer
+    - locationZone: String
+    + getCurrentOccupancyCount(): Integer
+}
+
+class LivestockRecord {
+    - animalId: String
+    - recordNumber: String
+    - birthdate: Date
+    - breed: String
+    + updatePenAssignment(newPen: Pen): Void
+    + getAgeInMonths(): Integer
+}
+
+class HealthTracking {
+    - trackingCode: String
+    - veterinaryVisitDate: Date
+    - symptoms: List<String>
+    - treatmentPlan: String
+    - healthData: String
+    + recordMedicalVisit(): Void
+    + updateHealthStatus(status: String): Void
+}
+
+class VaccinationSchedule {
+    - scheduleId: String
+    - scheduleDetails: String
+    - reminderDate: Date
+    - vaccinationDate: Date
+    - vaccinationHistory: List<String>
+    + setReminder(date: Date): Void
+    + logAdministeredVaccine(vaccineName: String, date: Date): Void
+}
+
+' --- Relationships & Multiplicities ---
+
+' Livestock housing layout
+Pen "1" -- "*" LivestockRecord : houses >
+
+' Health logs are strongly bound to an animal (Composition)
+LivestockRecord "1" *-- "*" HealthTracking : history tracked by >
+
+' Vaccination tracking is strictly tied to an animal (Composition)
+LivestockRecord "1" *-- "*" VaccinationSchedule : managed by >
+
+note top of Pen
+  <b>Housing Management:</b>
+  Livestock Records maintain a reference 
+  to exactly one physical Pen at any given time.
+end note
+
+note bottom of LivestockRecord
+  <b>Composition (Black Diamond):</b>
+  If a Livestock record is permanently purged, 
+  its dependent medical histories (HealthTracking) 
+  and its specific VaccinationSchedules are removed 
+  from the active runtime cluster automatically.
+end note
+
+@endum

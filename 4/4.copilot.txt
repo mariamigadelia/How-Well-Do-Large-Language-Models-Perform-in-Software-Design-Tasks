@@ -1,0 +1,90 @@
+@startuml
+title Computerized Banking Network Class Diagram
+
+class Bank {
+    -name : String
+    -accounts : List<Account>
+    +processTransaction(transaction : Transaction)
+    +getAccount(accountNumber : String) : Account
+}
+
+class Account {
+    -accountNumber : String
+    -balance : float
+    +deposit(amount : float)
+    +withdraw(amount : float)
+    +getBalance() : float
+}
+
+class Transaction {
+    -transactionId : String
+    -amount : float
+    -type : String
+    +execute()
+}
+
+class CashierStation {
+    -stationId : String
+    +enterTransaction(account : Account, transaction : Transaction)
+}
+
+class Cashier {
+    -name : String
+    +inputTransaction(account : Account, transaction : Transaction)
+}
+
+class ATM {
+    -atmId : String
+    +acceptCard(card : CashCard)
+    +interactWithUser()
+    +communicateWithCentralSystem(transaction : Transaction)
+    +dispenseCash(amount : float)
+    +printReceipt(transaction : Transaction)
+}
+
+class CashCard {
+    -cardNumber : String
+    -customer : Customer
+    +getCustomer() : Customer
+}
+
+class Customer {
+    -name : String
+    -customerId : String
+}
+
+class CentralComputer {
+    +clearTransaction(transaction : Transaction, bank : Bank)
+    +recordTransaction(transaction : Transaction)
+    +ensureSecurity()
+    +handleConcurrency(account : Account)
+}
+
+class SecuritySystem {
+    +authenticate(card : CashCard)
+    +authorize(transaction : Transaction)
+}
+
+class RecordKeeper {
+    +logTransaction(transaction : Transaction)
+    +logAccess(account : Account)
+}
+
+class Consortium {
+    -banks : List<Bank>
+    +apportionCost()
+}
+
+' Relationships
+CashierStation --> Bank : communicates
+Cashier --> CashierStation : operates
+ATM --> CentralComputer : communicates
+ATM --> CashCard : accepts
+CashCard --> Customer : belongs to
+CentralComputer --> Bank : clears transactions
+CentralComputer --> RecordKeeper : logs
+CentralComputer --> SecuritySystem : ensures security
+Consortium --> Bank : includes
+Consortium --> CentralComputer : shares
+
+@enduml

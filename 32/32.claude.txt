@@ -1,0 +1,140 @@
+@startuml FlightReservationSystem
+
+' ===================== ENTITIES =====================
+
+class Flight {
+  - number : String
+  - date : Date
+  - departureTime : Time
+  - arrivalTime : Time
+  + getShortInfo() : String
+}
+
+class Plane {
+  - registration : String
+  - model : String
+}
+
+class Seat {
+  - number : String
+  - class : String
+}
+
+class Customer {
+  - id : String
+  - title : String
+  - name : String
+  - address : String
+}
+
+class Reservation {
+  - reservationDate : Date
+  - status : String
+}
+
+class Ticket {
+  - ticketNumber : String
+  - issueDate : Date
+}
+
+class Route {
+}
+
+class Span {
+}
+
+class Airport {
+  - code : String
+  - name : String
+}
+
+class Airline {
+  ' a direct flight between two airports
+}
+
+class BasicAirline {
+  ' an airline with no stops
+}
+
+class InformationBoard {
+  + displayFlightInfo()
+}
+
+' ===================== FACILITIES =====================
+
+abstract class Facility {
+  - name : String
+}
+
+class Parking
+class Hotel
+class Restaurant
+
+class City {
+  - name : String
+}
+
+' ===================== FLIGHT / PLANE / SEAT =====================
+
+Flight "1" -- "1" Plane : assigned >
+Plane "1" *-- "1..*" Seat : contains >
+
+' ===================== ROUTE / SPAN / AIRLINE =====================
+
+Flight "1" -- "1" Route : follows >
+Route "1" *-- "1..*" Span : includes >
+Span "*" -- "1" Flight : is part of >
+
+Airline <|-- BasicAirline
+Airline "1" -- "1..*" Span : realized by >
+Route "1" o-- "1..*" BasicAirline : connected set of >
+
+' Origin / Destination roles
+Route   "*" --> "1" Airport : origin >
+Route   "*" --> "1" Airport : destination >
+Span    "*" --> "1" Airport : origin >
+Span    "*" --> "1" Airport : destination >
+Airline "*" --> "1" Airport : from >
+Airline "*" --> "1" Airport : to >
+
+' Connecting flights at intermediate stops
+Flight "1" -- "*" Flight : connecting flights >
+
+' ===================== RESERVATIONS / TICKETS =====================
+
+Customer "1" -- "*" Reservation : makes >
+Reservation "*" --> "1" Seat : reserves >
+Reservation "*" --> "1" Flight : on >
+Customer "1" -- "*" Ticket : has >
+Ticket "1" -- "1..*" Reservation : covers >
+
+' ===================== INFORMATION BOARDS =====================
+
+InformationBoard "*" --> "1" Airport : located at >
+InformationBoard "1" --> "*" Flight : shows >
+
+' ===================== FACILITIES & CITIES =====================
+
+Facility <|-- Parking
+Facility <|-- Hotel
+Facility <|-- Restaurant
+
+Airport "1" *-- "*" Facility : provides >
+Airport "*" -- "*" City : near >
+Facility "*" --> "0..1" City : located in >
+
+note right of Airport
+  Roles per route/span:
+  - origin   : keep parking info
+  - destination : list nearby hotels
+  - intermediate stop : list hotels,
+    restaurants, nearby cities, etc.
+end note
+
+note bottom of Span
+  Stops are not shown on the ticket
+  unless the flight number changes
+  (indicating a plane change).
+end note
+
+@enduml

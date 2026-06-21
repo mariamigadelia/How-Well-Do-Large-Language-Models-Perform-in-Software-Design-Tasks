@@ -1,0 +1,80 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam monochrome true
+left to right direction
+
+title Timber-Framed House Construction - Class Diagram
+
+' --- Classes ---
+
+class TimberFramedHouse {
+    - numberOfRooms: Integer
+    - numberOfFloors: Integer
+}
+
+abstract class BuildingMaterial {
+    - materialId: String
+}
+
+class WoodenLog {
+    - length: Double
+    - diameter: Double
+}
+
+class AdobeBrick {
+    - weight: Double
+}
+
+class Nail {
+    - sizeType: String
+}
+
+class Carpenter {
+    - name: String
+    - hourlyWage: Double
+}
+
+class Hammer {
+    - weight: Double
+}
+
+class Saw {
+    - bladeType: String
+}
+
+' --- Relationships & Multiplicities ---
+
+' Materials Composition: Materials belong to exactly 1 house and cannot exist without it contextually.
+TimberFramedHouse "1" *-- "5..10" WoodenLog : contains >
+TimberFramedHouse "1" *-- "200..400" AdobeBrick : contains >
+TimberFramedHouse "1" *-- "1000..2000" Nail : contains >
+
+' Carpenter Responsibility Assignment
+' A house has at least 1 carpenter; a carpenter can work on at most 1 house (0..1)
+TimberFramedHouse "0..1" -- "1..*" Carpenter : built by >
+
+' Tool Ownership Composition
+' A carpenter owns exactly one hammer and exactly one saw
+Carpenter "1" *-- "1" Hammer : owns >
+Carpenter "1" *-- "1" Saw : owns >
+
+' Material Inheritance (Optional structural cleanup)
+BuildingMaterial <|-- WoodenLog
+BuildingMaterial <|-- AdobeBrick
+BuildingMaterial <|-- Nail
+
+note top of TimberFramedHouse
+  <b>House Composition:</b>
+  The black diamonds indicate composition.
+  Per requirements, each building material piece 
+  is bound strictly to <i>exactly one</i> house instance.
+end note
+
+note bottom of Carpenter
+  <b>Workload Constraints:</b>
+  Multiplicity 0..1 on TimberFramedHouse ensures 
+  that a carpenter is either unassigned or working 
+  on at most one house at any given time.
+end note
+
+@endum

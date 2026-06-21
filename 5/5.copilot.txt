@@ -1,0 +1,61 @@
+@startuml
+title Address Book Program Class Diagram
+
+class AddressBook {
+    -entries : List<Entry>
+    -fileName : String
+    -isModified : boolean
+    +addEntry(entry : Entry)
+    +editEntry(entry : Entry, newAddress : String, newCity : String, newState : String, newZip : String, newPhone : String)
+    +deleteEntry(entry : Entry)
+    +sortByLastName()
+    +sortByZipCode()
+    +printMailingLabels()
+    +getEntries() : List<Entry>
+}
+
+class Entry {
+    -firstName : String
+    -lastName : String
+    -address : String
+    -city : String
+    -state : String
+    -zip : String
+    -phone : String
+    +getFullName() : String
+    +getMailingLabel() : String
+}
+
+class FileManager {
+    +newAddressBook() : AddressBook
+    +openFile(fileName : String) : AddressBook
+    +closeAddressBook(addressBook : AddressBook)
+    +save(addressBook : AddressBook)
+    +saveAs(addressBook : AddressBook, fileName : String)
+}
+
+class Program {
+    -currentAddressBook : AddressBook
+    -openWindows : List<Window>
+    +newFile()
+    +openFile(fileName : String)
+    +closeFile()
+    +saveFile()
+    +saveFileAs(fileName : String)
+    +quit()
+}
+
+class Window {
+    -title : String
+    -addressBook : AddressBook
+    +display()
+    +close()
+}
+
+' Relationships
+AddressBook --> Entry : contains
+Program --> FileManager : uses
+Program --> Window : manages
+Window --> AddressBook : displays
+
+@enduml

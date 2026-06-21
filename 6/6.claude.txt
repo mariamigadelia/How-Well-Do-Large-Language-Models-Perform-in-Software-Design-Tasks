@@ -1,0 +1,37 @@
+@startuml
+
+class Ship
+
+class PassengerShip
+class ContainerShip
+
+class Restaurant {
+  - seats : int
+}
+
+class DieselEngine
+
+class Cylinder
+
+class Valve
+
+class CombustionChamber
+
+' Inheritance: a Ship is either a passenger ship or a container ship
+Ship <|-- PassengerShip
+Ship <|-- ContainerShip
+
+' A passenger ship may have one or more restaurants
+PassengerShip "1" o-- "0..*" Restaurant : has
+
+' Each ship has at least one diesel engine
+Ship "1" *-- "1..*" DieselEngine : has
+
+' A diesel engine comprises several cylinders
+DieselEngine "1" *-- "2..*" Cylinder : comprises
+
+' Each cylinder has valves and a combustion chamber
+Cylinder "1" *-- "1..*" Valve : has
+Cylinder "1" *-- "1" CombustionChamber : has
+
+@enduml

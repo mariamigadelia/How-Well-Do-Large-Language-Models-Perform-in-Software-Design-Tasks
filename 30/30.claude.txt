@@ -1,0 +1,121 @@
+@startuml WatCard_System
+
+' ==================== Core Classes ====================
+
+class Student {
+  - studentNumber : String
+  - name : String
+  - email : String
+  - telephone : String
+  - major : String
+  - cardValidity : boolean
+  + accessSecureArea(area : SecureArea) : boolean
+  + deposit(amount : double) : void
+  + purchase(fee : Fee) : void
+}
+
+class WatCard {
+  - cardId : String
+  - issueDate : Date
+  - expiryDate : Date
+  - isValid : boolean
+  + validate() : boolean
+  + grantAccess(area : SecureArea) : boolean
+}
+
+class Account {
+  - accountNumber : String
+  - balance : double
+  + deposit(amount : double) : void
+  + withdraw(amount : double) : boolean
+  + getBalance() : double
+}
+
+' ==================== Secure Area Access ====================
+
+class SecureArea {
+  - areaId : String
+  - location : String
+  - description : String
+  - accessAfterHours : boolean
+  + checkAccess(card : WatCard) : boolean
+}
+
+' ==================== Deposits ====================
+
+abstract class Deposit {
+  - depositId : String
+  - amount : double
+  - dateTime : DateTime
+  + process() : void
+}
+
+class OnlineDeposit {
+  - transactionRef : String
+  + process() : void
+}
+
+' ==================== Fees / Purchases ====================
+
+abstract class Fee {
+  - feeId : String
+  - amount : double
+  - description : String
+}
+
+class ParkingFee {
+  - dispenserId : String
+  - permitDuration : String
+}
+
+class LibraryFee {
+  - fineReason : String
+}
+
+class EquipmentRentalFee {
+  - equipmentName : String
+  - rentalPeriod : String
+}
+
+class TranscriptFee {
+  - copies : int
+  - official : boolean
+}
+
+' ==================== Usage Record ====================
+
+class UsageRecord {
+  - recordId : String
+  - dateTime : DateTime
+  - location : String
+  - type : UsageType
+  - amount : double
+}
+
+enum UsageType {
+  ACCESS
+  DEPOSIT
+  PAYMENT
+}
+
+' ==================== Relationships ====================
+
+Student "1" -- "1" WatCard : holds >
+WatCard "1" -- "1" Account : associated with >
+
+Account "1" -- "0..*" Deposit : receives >
+Account "1" -- "0..*" Fee : pays >
+
+Deposit <|-- OnlineDeposit
+
+Fee <|-- ParkingFee
+Fee <|-- LibraryFee
+Fee <|-- EquipmentRentalFee
+Fee <|-- TranscriptFee
+
+WatCard "1" -- "0..*" UsageRecord : generates >
+UsageRecord "0..*" -- "1" UsageType : has >
+
+WatCard "0..*" -- "0..*" SecureArea : grants access to >
+
+@enduml

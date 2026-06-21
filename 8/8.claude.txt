@@ -1,0 +1,57 @@
+@startuml
+
+abstract class Train {
+}
+
+class FreightTrain extends Train {
+}
+
+class PassengerTrain extends Train {
+}
+
+class Locomotive {
+}
+
+abstract class Car {
+}
+
+class FreightCar extends Car {
+}
+
+class PassengerCoach extends Car {
+}
+
+class DiningCar extends Car {
+}
+
+class BigRoom {
+}
+
+class Compartment {
+}
+
+class AirConditioner {
+  - powered : boolean
+  - maxAmbientTemperature : float
+  + turnOn() : void
+  + turnOff() : void
+}
+
+' --- A train has one or two locomotives ---
+Train "1" *-- "1..2" Locomotive : pulls
+
+' --- A freight train's carriages are only freight cars ---
+FreightTrain "1" *-- "1..*" FreightCar : consists of
+
+' --- A passenger train has at least one coach and at most one dining car ---
+PassengerTrain "1" *-- "1..*" PassengerCoach : consists of
+PassengerTrain "1" *-- "0..1" DiningCar : consists of
+
+' --- A coach is composed of up to one big room and one or more compartments ---
+PassengerCoach "1" *-- "0..1" BigRoom : contains
+PassengerCoach "1" *-- "1..*" Compartment : contains
+
+' --- Each coach has one air conditioner ---
+PassengerCoach "1" *-- "1" AirConditioner : has
+
+@enduml

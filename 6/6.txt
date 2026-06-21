@@ -1,0 +1,2 @@
+Generate plantUML code for a class diagram satisfying the following requirements:
+Ships are either passenger ships or container ships. A passenger ship may have one or more restaurants, which each are equipped with a certain number of seats. Each ship has at least one diesel engine. A diesel engine comprises several cylinders. Each cylinder has valves and a combustion chamber.

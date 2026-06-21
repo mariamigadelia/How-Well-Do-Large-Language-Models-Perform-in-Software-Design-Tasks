@@ -1,0 +1,59 @@
+@startuml
+title Organic Farming Certification Management System Class Diagram
+
+' ==================== CERTIFICATION ====================
+class Certification {
+  - certificationNumber : String
+  - date : Date
+  - description : String
+  - validity : boolean
+  + assessEligibility(f : Farm) : boolean
+  + conductInspection(f : Farm) : void
+  + issueCertificate(f : Farm) : void
+}
+
+' ==================== FARM ====================
+class Farm {
+  - farmID : String
+  - name : String
+  - address : String
+  - gpsCoordinates : String
+}
+
+Farm "1" --> "*" Certification : receives >
+
+' ==================== MONITORING ====================
+class Monitoring {
+  - monitoringID : String
+  - date : Date
+  - description : String
+  - outcome : String
+  + trackActivity(f : Farm) : void
+  + verifyCompliance(f : Farm) : boolean
+}
+
+Monitoring "1" --> "1" Farm : references >
+
+' ==================== RECORD ====================
+class CertificationRecord {
+  - recordNumber : String
+  - renewalDate : Date
+  - status : String
+  + manageRenewal(c : Certification) : void
+  + updateStatus(c : Certification) : void
+}
+
+CertificationRecord "1" --> "1" Certification : stores >
+
+' ==================== SYSTEM ====================
+class CertificationSystem {
+  + manageCertification(c : Certification) : void
+  + monitorFarm(m : Monitoring) : void
+  + maintainRecords(r : CertificationRecord) : void
+}
+
+CertificationSystem --> Certification : manages >
+CertificationSystem --> Monitoring : tracks >
+CertificationSystem --> CertificationRecord : maintains >
+
+@enduml

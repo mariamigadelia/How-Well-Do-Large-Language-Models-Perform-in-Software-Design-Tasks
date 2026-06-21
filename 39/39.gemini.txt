@@ -1,0 +1,84 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam monochrome true
+left to right direction
+
+title Charity Donation Management System - Class Diagram
+
+' --- Core Domain Classes ---
+
+class Donor {
+    - donorId: String
+    - name: String
+    - email: String
+    - contactNumber: String
+    - demographicData: String
+    + getDonorProfile(): String
+}
+
+class Donation {
+    - donationNumber: String
+    - timestamp: DateTime
+    - amount: Double
+    + recordDonation(): Boolean
+    + getDonationDetails(): String
+}
+
+class Receipt {
+    - receiptId: String
+    - timestamp: DateTime
+    - taxEligibleAmount: Double
+    - taxExemptStatus: Boolean
+    + generateReceipt(): Void
+    + printForTaxPurposes(): String
+}
+
+class ContributionHistory {
+    - contributionId: String
+    - totalAmount: Double
+    - trackingStartDate: Date
+    + updateAggregateTotal(amount: Double): Void
+    + getContributionTrend(): String
+}
+
+class FundraisingCampaign {
+    - campaignId: String
+    - campaignName: String
+    - targetGoal: Double
+    - startDate: Date
+    - endDate: Date
+    - currentFundsRaised: Double
+    + calculatePerformance(): Double
+    + analyzeDemographics(): String
+    + generateTrendReport(): String
+}
+
+' --- Relationships & Multiplicities ---
+
+' Donor Records and History Tracking
+Donor "1" *-- "1" ContributionHistory : owns over time >
+Donor "1" -- "*" Donation : contributes >
+
+' Donation and Tax Receipt Processing
+Donation "1" *-- "1" Receipt : issues/generates >
+
+' Campaign Association
+FundraisingCampaign "1" -- "*" Donation : allocates to >
+FundraisingCampaign ..> ContributionHistory : analyzes trends from >
+FundraisingCampaign ..> Donor : evaluates demographics of >
+
+note top of Receipt
+  <b>Tax Compliance:</b>
+  A Receipt is tightly bound (Composition) 
+  to exactly one Donation, containing dedicated 
+  fields required for official tax auditing.
+end note
+
+note bottom of FundraisingCampaign
+  <b>Analytics Engine:</b>
+  Evaluates overall performance metrics, 
+  donor demographics, and historical 
+  contribution trends.
+end note
+
+@endum

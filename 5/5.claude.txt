@@ -1,0 +1,154 @@
+@startuml AddressBookSystem
+
+' ============================
+'        ENUMERATIONS
+' ============================
+enum SortOrder {
+    BY_NAME
+    BY_ZIP
+}
+
+' ============================
+'        MAIN CONTROLLER
+' ============================
+class AddressBookApplication {
+    - currentBook : AddressBook
+    --
+    + newAddressBook() : void
+    + openAddressBook(file : File) : void
+    + closeAddressBook() : void
+    + saveAddressBook() : void
+    + saveAddressBookAs(file : File) : void
+    + quit() : void
+    - offerToSaveChanges() : boolean
+}
+
+' ============================
+'        MAIN WINDOW
+' ============================
+class MainWindow {
+    - title : String
+    --
+    + setTitle(name : String) : void
+    + displayEntries() : void
+    + showSaveDialog() : File
+    + showOpenDialog() : File
+    + promptSaveChanges() : int
+}
+
+' ============================
+'        ADDRESS BOOK
+' ============================
+class AddressBook {
+    - entries : List<Entry>
+    - associatedFile : File
+    - dirty : boolean
+    - sortOrder : SortOrder
+    --
+    + addEntry(entry : Entry) : void
+    + deleteEntry(entry : Entry) : void
+    + editEntry(entry : Entry, info : ContactInfo) : void
+    + sortByName() : void
+    + sortByZip() : void
+    + printMailingLabels() : String
+    + isDirty() : boolean
+    + setDirty(flag : boolean) : void
+    + getFile() : File
+    + setFile(file : File) : void
+    + isUntitled() : boolean
+}
+
+' ============================
+'        ENTRY
+' ============================
+class Entry {
+    --
+    + getName() : Name
+    + getContactInfo() : ContactInfo
+    + updateContactInfo(info : ContactInfo) : void
+    + toMailingLabel() : String
+}
+
+' ============================
+'        NAME (immutable)
+' ============================
+class Name {
+    - firstName : String
+    - lastName : String
+    --
+    + getFirstName() : String
+    + getLastName() : String
+    + compareTo(other : Name) : int
+}
+
+' ============================
+'      CONTACT INFORMATION
+' ============================
+class ContactInfo {
+    - address : String
+    - city : String
+    - state : String
+    - zip : String
+    - phone : String
+    --
+    + getAddress() : String
+    + getCity() : String
+    + getState() : String
+    + getZip() : String
+    + getPhone() : String
+}
+
+' ============================
+'      COMPARATORS (Strategy)
+' ============================
+interface EntryComparator {
+    + compare(e1 : Entry, e2 : Entry) : int
+}
+
+class NameComparator {
+    + compare(e1 : Entry, e2 : Entry) : int
+}
+
+class ZipComparator {
+    + compare(e1 : Entry, e2 : Entry) : int
+}
+
+' ============================
+'        FILE HANDLER
+' ============================
+class FileManager {
+    + load(file : File) : AddressBook
+    + save(book : AddressBook, file : File) : void
+}
+
+class File {
+    - path : String
+    - name : String
+    --
+    + getName() : String
+    + getPath() : String
+}
+
+' ============================
+'        RELATIONSHIPS
+' ============================
+AddressBookApplication "1" --> "0..1" AddressBook : manages >
+AddressBookApplication "1" --> "1" MainWindow : controls >
+AddressBookApplication ..> FileManager : uses >
+
+MainWindow "1" --> "0..1" AddressBook : displays >
+
+AddressBook "1" o-- "0..*" Entry : contains >
+AddressBook ..> EntryComparator : uses >
+AddressBook "1" --> "0..1" File : associatedFile >
+
+Entry "1" *-- "1" Name : has >
+Entry "1" *-- "1" ContactInfo : has >
+
+NameComparator ..|> EntryComparator
+ZipComparator ..|> EntryComparator
+
+FileManager ..> File : reads/writes >
+FileManager ..> AddressBook : serializes >
+
+@enduml

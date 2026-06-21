@@ -1,0 +1,122 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam monochrome true
+left to right direction
+
+title Bank Communication Preferences System - Class Diagram
+
+' --- UI & Platform Layer ---
+
+interface OnlineBankingApp {
+    + renderMenu(): Void
+}
+
+class WebApp implements OnlineBankingApp {
+    - browserType: String
+}
+
+abstract class MobileApp implements OnlineBankingApp {
+    - osVersion: String
+    + createAccount(): Void
+}
+
+class AndroidApp extends MobileApp {
+}
+
+class iOSApp extends MobileApp {
+}
+
+class AccountsMenu {
+    + displayPage(): Void
+}
+
+class SetPreferencesScreen {
+    - infoMessage: String = "Changes apply to all transaction flows and contact-required processes."
+    - isEmailOptionEnabled: Boolean
+    - isContinueButtonEnabled: Boolean
+    + renderPreferencesLayout(): Void
+    + onSavePreferencesClick(): Void
+}
+
+' --- Customer & Profile Layer ---
+
+class CustomerProfile {
+    - customerId: String
+    - name: String
+    - surname: String
+    - emailAddress: String
+    - phoneNumber: String
+    - address: String
+    + hasValidEmail(): Boolean
+    + hasValidPhone(): Boolean
+}
+
+' --- Preferences & Database Storage ---
+
+enum ChannelPreference {
+    EMAIL
+    SMS
+    BOTH
+}
+
+class CommunicationPreference {
+    - preferenceId: String
+    - selectedChannel: ChannelPreference
+    - lastUpdated: DateTime
+    + saveToDatabase(): Boolean
+    + getActiveChannel(): ChannelPreference
+}
+
+' --- Notification Engine (Strategy Pattern) ---
+
+interface NotificationStrategy {
+    + sendInformation(profile: CustomerProfile, message: String): Void
+}
+
+class EmailNotification implements NotificationStrategy {
+    + sendInformation(profile: CustomerProfile, message: String): Void
+}
+
+class SMSNotification implements NotificationStrategy {
+    + sendInformation(profile: CustomerProfile, message: String): Void
+}
+
+class NotificationService {
+    - currentStrategy: NotificationStrategy
+    + setNotificationStrategy(strategy: NotificationStrategy): Void
+    + dispatchAlert(profile: CustomerProfile, message: String): Void
+}
+
+' --- Relationships & Multiplicities ---
+
+' UI Hierarchies
+OnlineBankingApp ..> AccountsMenu : contains >
+AccountsMenu "1" *-- "1" SetPreferencesScreen : features at bottom of page >
+
+' UI Business Logic Interaction
+SetPreferencesScreen ..> CustomerProfile : evaluates contact data of >
+SetPreferencesScreen ..> CommunicationPreference : updates >
+
+' Core Domain Connections
+CustomerProfile "1" *-- "1" CommunicationPreference : owns >
+NotificationService ..> CommunicationPreference : reads active choice from >
+NotificationService ..> CustomerProfile : delivers to >
+
+note top of SetPreferencesScreen
+  <b>UI Flow Validation Rules:</b>
+  - If CustomerProfile.hasValidEmail() is false:
+    * Email option is set to "disabled"
+    * SMS option is selected by default
+    * isContinueButtonEnabled is set to false
+  - If both email and phone exist:
+    * User can choose freely and proceed.
+end note
+
+note bottom of NotificationService
+  <b>Dynamic Strategy Routing:</b>
+  Changes immediately apply to all transaction flows. 
+  The service swaps the NotificationStrategy component 
+  at runtime depending on the stored ChannelPreference.
+end note
+
+@endum

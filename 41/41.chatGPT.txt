@@ -1,0 +1,215 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+class OnlineBankingSystem {
+  +login(customer: Customer)
+  +showInvestmentsMenu()
+}
+
+abstract class BankingApplication {
+  -appId: String
+  -platform: PlatformType
+  +createAccount()
+  +openInvestmentsMenu()
+  +applyForIPO()
+}
+
+class WebBankingApplication
+class MobileBankingApplication
+class AndroidApplication
+class IOSApplication
+
+class InvestmentsMenu {
+  +openIPOApplicationTab()
+}
+
+class IPOApplicationTab {
+  -tabName: String = "IPO Application"
+  +startApplication()
+}
+
+class ApplyForIPOService {
+  +checkEligibility(customer: Customer): boolean
+  +submitApplication(application: IPOApplication): ApplicationResult
+  +restrictAfterFailedAttempts(customer: Customer)
+}
+
+class Customer {
+  -customerId: String
+  -name: String
+  -surname: String
+  -email: String
+  -telephone: String
+  -customerType: CustomerType
+  -failedAttemptCount: int
+  -isFraudUser: boolean
+  +canApplyForIPO(): boolean
+}
+
+class RetailCustomer
+class CorporateCustomer
+
+class BankAccount {
+  -accountNumber: String
+  -status: AccountStatus
+  -balance: double
+}
+
+class CreditCard {
+  -cardNumber: String
+  -hasUnpaidPayment: boolean
+}
+
+class IPOApplication {
+  -applicationId: String
+  -applicationDate: Date
+  -numberOfShares: int
+  -amountPaid: double
+  -status: IPOApplicationStatus
+  +submit()
+  +markRejected()
+  +markApproved()
+}
+
+class Company {
+  -companyId: String
+  -companyName: String
+  -email: String
+  +reviewApplication(application: IPOApplication)
+  +rejectApplication(application: IPOApplication)
+}
+
+class LegalAllowanceDocument {
+  -documentId: String
+  -fileName: String
+  -fileFormat: FileFormat
+  +validateFormat(): boolean
+}
+
+class DocumentValidator {
+  +validate(document: LegalAllowanceDocument): boolean
+}
+
+class InformationPopup {
+  -message: String
+  +display()
+  +confirm()
+}
+
+class EmailService {
+  +sendCustomerEmail(application: IPOApplication)
+  +sendCompanyEmail(application: IPOApplication)
+  +sendRejectionEmail(application: IPOApplication)
+}
+
+class HtmlEmail {
+  -subject: String
+  -htmlBody: String
+  +generate()
+}
+
+class CallCentre {
+  +restoreIPOAccess(customer: Customer)
+}
+
+class ApplicationResult {
+  -success: boolean
+  -message: String
+}
+
+enum PlatformType {
+  WEB
+  ANDROID
+  IOS
+}
+
+enum CustomerType {
+  RETAIL
+  CORPORATE
+}
+
+enum AccountStatus {
+  ACTIVE
+  BLOCKED
+}
+
+enum FileFormat {
+  PDF
+  DOCX
+}
+
+enum IPOApplicationStatus {
+  DRAFT
+  SUBMITTED
+  SUCCESSFULLY_COMPLETED
+  REJECTED_BY_COMPANY
+  RESTRICTED
+  FAILED
+}
+
+BankingApplication <|-- WebBankingApplication
+BankingApplication <|-- MobileBankingApplication
+MobileBankingApplication <|-- AndroidApplication
+MobileBankingApplication <|-- IOSApplication
+
+OnlineBankingSystem o-- BankingApplication
+BankingApplication --> InvestmentsMenu
+InvestmentsMenu --> IPOApplicationTab
+IPOApplicationTab --> ApplyForIPOService
+
+Customer <|-- RetailCustomer
+Customer <|-- CorporateCustomer
+Customer "1" o-- "0..*" BankAccount
+Customer "1" o-- "0..*" CreditCard
+
+IPOApplication "1" --> "1" RetailCustomer : applicant
+IPOApplication "1" --> "1" Company : applied company
+IPOApplication "1" *-- "1" LegalAllowanceDocument
+IPOApplication "1" --> "1" InformationPopup
+
+ApplyForIPOService --> Customer
+ApplyForIPOService --> IPOApplication
+ApplyForIPOService --> DocumentValidator
+ApplyForIPOService --> EmailService
+ApplyForIPOService --> CallCentre
+
+DocumentValidator --> LegalAllowanceDocument
+EmailService --> HtmlEmail
+Company --> IPOApplication
+
+Customer --> CustomerType
+BankAccount --> AccountStatus
+BankingApplication --> PlatformType
+LegalAllowanceDocument --> FileFormat
+IPOApplication --> IPOApplicationStatus
+
+note right of InvestmentsMenu
+"IPO Application" tab is added
+under the "Investments" menu.
+end note
+
+note right of Customer
+Only retail customers can apply.
+Blocked account, unpaid credit card
+payments, or fraud status prevent application.
+end note
+
+note bottom of LegalAllowanceDocument
+Only .pdf and .docx files are allowed.
+Other formats cause validation error.
+end note
+
+note bottom of ApplyForIPOService
+More than 5 failed attempts restricts access.
+The 6th IPO application attempt is not allowed.
+Customer must call the call centre.
+end note
+
+note right of HtmlEmail
+HTML email includes:
+name, surname, email, telephone,
+company name, number of shares,
+and amount paid.
+end note
+
+@enduml

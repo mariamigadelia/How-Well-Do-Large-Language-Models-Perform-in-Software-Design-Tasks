@@ -1,0 +1,69 @@
+@startuml
+title Train System Class Diagram
+
+abstract class Train {
+    -trainId : String
+    -locomotives : List<Locomotive>
+    +addLocomotive(loco : Locomotive)
+}
+
+class FreightTrain {
+    -freightCars : List<FreightCar>
+    +addFreightCar(car : FreightCar)
+}
+
+class PassengerTrain {
+    -coaches : List<PassengerCoach>
+    -diningCar : DiningCar
+    +addCoach(coach : PassengerCoach)
+    +setDiningCar(diningCar : DiningCar)
+}
+
+class Locomotive {
+    -locoId : String
+}
+
+class FreightCar {
+    -carId : String
+}
+
+class PassengerCoach {
+    -coachId : String
+    -bigRoom : BigRoom
+    -compartments : List<Compartment>
+    -airConditioner : AirConditioner
+    +addCompartment(compartment : Compartment)
+    +setBigRoom(room : BigRoom)
+}
+
+class DiningCar {
+    -diningId : String
+}
+
+class BigRoom {
+    -roomId : String
+}
+
+class Compartment {
+    -compartmentId : String
+}
+
+class AirConditioner {
+    -maxAmbientTemp : float
+    -isOn : boolean
+    +turnOn()
+    +turnOff()
+}
+
+' Relationships
+Train <|-- FreightTrain
+Train <|-- PassengerTrain
+FreightTrain --> FreightCar : only freight cars
+PassengerTrain --> PassengerCoach : at least one
+PassengerTrain --> DiningCar : max one
+Train --> Locomotive : 1..2
+PassengerCoach --> BigRoom : up to one
+PassengerCoach --> Compartment : one or more
+PassengerCoach --> AirConditioner : has
+
+@enduml

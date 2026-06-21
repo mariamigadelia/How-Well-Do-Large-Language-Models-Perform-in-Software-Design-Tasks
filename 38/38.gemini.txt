@@ -1,0 +1,80 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam monochrome true
+left to right direction
+
+title Inventory Optimization & Supply Chain System - Class Diagram
+
+' --- Core Domain Classes ---
+
+class InventoryItem {
+    - itemId: String
+    - description: String
+    - currentStockLevel: Integer
+    - leadTime: Integer
+    + checkReorderPoint(): Boolean
+    + replenishStock(quantity: Integer): Void
+}
+
+class DemandForecast {
+    - forecastId: String
+    - forecastedQuantity: Integer
+    - timeframe: String
+    + generateAutomatedForecast(): Void
+}
+
+class Order {
+    - orderNumber: String
+    - orderDate: Date
+    - orderQuantity: Integer
+    - status: String
+    + processOrder(): Void
+    + trackOrderStatus(): String
+}
+
+class Supplier {
+    - supplierId: String
+    - telephoneNumber: String
+    - contactInfo: String
+    - productCatalogue: List<String>
+    - leadTimeCommitment: Integer
+    + evaluatePerformance(): String
+}
+
+class Shipment {
+    - shipmentNumber: String
+    - timestamp: DateTime
+    - trackingInformation: String
+    + updateTracking(info: String): Void
+}
+
+' --- Relationships & Multiplicities ---
+
+' Items and Supplier Interaction
+InventoryItem "*" -- "1" Supplier : supplied by >
+
+' Demand Forecasting Matrix
+InventoryItem "1" *-- "1..*" DemandForecast : has >
+
+' Order processing based on forecasts and tied to specific items
+Order "*" -- "1" DemandForecast : triggered by >
+Order "*" -- "1" InventoryItem : requests >
+
+' Shipments made based on order references
+Shipment "1" -- "1" Order : fulfills >
+
+note top of InventoryItem
+  <b>Inventory Replenishment:</b>
+  Uses its currentStockLevel and leadTime 
+  against automated forecasts to determine 
+  exactly when to trigger a new Order.
+end note
+
+note bottom of Supplier
+  <b>Performance Evaluation:</b>
+  evaluatePerformance() analyzes actual 
+  Shipment timestamps against the supplier's 
+  leadTimeCommitment to score reliability.
+end note
+
+@endum

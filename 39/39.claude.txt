@@ -1,0 +1,86 @@
+@startuml Charity Donation Management System
+
+skinparam classAttributeIconSize 0
+
+class Donor {
+    - donorId: String
+    - name: String
+    - email: String
+    - phone: String
+    - address: String
+    --
+    + register(): void
+    + updateInfo(): void
+    + getDonationHistory(): List<Donation>
+}
+
+class Donation {
+    - donationNumber: String
+    - timestamp: DateTime
+    - donationAmount: double
+    - paymentMethod: String
+    --
+    + recordDonation(): void
+    + getDetails(): String
+    + validateAmount(): boolean
+}
+
+class Receipt {
+    - receiptId: String
+    - timestamp: DateTime
+    - taxYear: int
+    - amount: double
+    --
+    + generateReceipt(): void
+    + issueForTax(): void
+    + printReceipt(): String
+}
+
+class Contribution {
+    - contributionId: String
+    - totalAmount: double
+    - firstDonationDate: DateTime
+    - lastDonationDate: DateTime
+    - donationCount: int
+    --
+    + trackContribution(): void
+    + calculateTotal(): double
+    + getContributionSummary(): String
+}
+
+class Campaign {
+    - campaignId: String
+    - campaignName: String
+    - startDate: DateTime
+    - endDate: DateTime
+    - targetAmount: double
+    - raisedAmount: double
+    --
+    + createCampaign(): void
+    + getProgress(): double
+    + isActive(): boolean
+}
+
+class CampaignAnalysis {
+    - analysisId: String
+    - generatedDate: DateTime
+    - totalDonations: int
+    - averageDonation: double
+    --
+    + evaluatePerformance(): Report
+    + analyzeDonorDemographics(): Report
+    + analyzeContributionTrends(): Report
+    + generateReport(): Report
+}
+
+' Relationships
+Donor "1" --> "0..*" Donation : makes
+Donation "1" --> "1" Receipt : issues
+Donor "1" --> "1" Contribution : has
+Contribution "1" o-- "0..*" Donation : aggregates
+Campaign "1" --> "0..*" Donation : receives
+Campaign "1" --> "1" CampaignAnalysis : analyzed by
+CampaignAnalysis ..> Donor : analyzes demographics
+CampaignAnalysis ..> Contribution : analyzes trends
+
+@enduml

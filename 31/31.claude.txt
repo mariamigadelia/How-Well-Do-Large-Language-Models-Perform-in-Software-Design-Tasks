@@ -1,0 +1,176 @@
+@startuml BankCommunicationPreferences
+
+' ===== Enumerations =====
+enum CommunicationType {
+    EMAIL
+    SMS
+}
+
+enum PlatformType {
+    ANDROID
+    IOS
+}
+
+' ===== Customer / Profile =====
+class Customer {
+    - customerId : String
+    - name : String
+    - surname : String
+    - emailAddress : String
+    - phoneNumber : String
+    - address : String
+    --
+    + hasEmail() : boolean
+    + hasPhoneNumber() : boolean
+    + getProfile() : CustomerProfile
+}
+
+class CustomerProfile {
+    - customerId : String
+    - name : String
+    - surname : String
+    - emailAddress : String
+    - phoneNumber : String
+    - address : String
+    --
+    + isEmailRegistered() : boolean
+    + isPhoneRegistered() : boolean
+}
+
+' ===== Communication Preference =====
+class CommunicationPreference {
+    - preferenceId : String
+    - customerId : String
+    - selectedType : CommunicationType
+    - lastUpdated : Date
+    --
+    + setPreference(type : CommunicationType) : void
+    + getPreference() : CommunicationType
+    + appliesToAllFlows() : boolean
+}
+
+' ===== Banking System =====
+class BankingSystem {
+    - systemId : String
+    --
+    + login(customer : Customer) : boolean
+    + displayMenu() : Menu
+    + sendInformation(customer : Customer, message : Message) : void
+}
+
+' ===== Menu Structure =====
+class Menu {
+    - menuName : String
+    --
+    + getAccountsMenu() : AccountsMenu
+}
+
+class AccountsMenu {
+    - menuItems : List<String>
+    --
+    + addSetPreferencesAtBottom() : void
+    + openSetPreferences() : SetPreferencesScreen
+}
+
+' ===== Set Preferences Screen / Process =====
+class SetPreferencesScreen {
+    - informationMessage : String
+    - emailOptionEnabled : boolean
+    - smsOptionEnabled : boolean
+    - emailSelected : boolean
+    - smsSelected : boolean
+    --
+    + displayInfoMessage() : void
+    + loadOptions(profile : CustomerProfile) : void
+    + selectEmail() : void
+    + selectSMS() : void
+    + canContinue() : boolean
+    + completeProcess() : CommunicationPreference
+}
+
+' ===== Mobile Platform (Abstract) =====
+abstract class MobileApp {
+    # platformType : PlatformType
+    --
+    + createAccount() : void
+    + openApp() : void
+    + showSetPreferences() : SetPreferencesScreen
+}
+
+class AndroidApp {
+    + createAccount() : void
+    + openApp() : void
+    + showSetPreferences() : SetPreferencesScreen
+}
+
+class IOSApp {
+    + createAccount() : void
+    + openApp() : void
+    + showSetPreferences() : SetPreferencesScreen
+}
+
+' ===== Notification Services =====
+abstract class NotificationService {
+    + send(customer : Customer, message : Message) : void
+}
+
+class EmailService {
+    + send(customer : Customer, message : Message) : void
+}
+
+class SMSService {
+    + send(customer : Customer, message : Message) : void
+}
+
+class Message {
+    - content : String
+    - timestamp : Date
+}
+
+' ===== Database =====
+class Database {
+    + savePreference(pref : CommunicationPreference) : void
+    + getPreference(customerId : String) : CommunicationPreference
+    + getCustomer(customerId : String) : Customer
+}
+
+' ===== Bank =====
+class Bank {
+    - bankName : String
+    --
+    + sendInformationToCustomer(customer : Customer) : void
+}
+
+' ===== Relationships =====
+Customer "1" -- "1" CustomerProfile : has >
+Customer "1" -- "1" CommunicationPreference : sets >
+CommunicationPreference --> CommunicationType : uses
+
+BankingSystem "1" -- "1" Menu : displays >
+Menu "1" o-- "1" AccountsMenu : contains >
+AccountsMenu ..> SetPreferencesScreen : opens >
+SetPreferencesScreen ..> CustomerProfile : reads >
+SetPreferencesScreen ..> CommunicationPreference : creates >
+
+MobileApp <|-- AndroidApp
+MobileApp <|-- IOSApp
+MobileApp --> PlatformType : type
+MobileApp ..> SetPreferencesScreen : shows >
+MobileApp --> BankingSystem : connects to >
+
+NotificationService <|-- EmailService
+NotificationService <|-- SMSService
+NotificationService ..> Message : sends >
+
+Bank "1" -- "*" NotificationService : uses >
+Bank ..> Customer : communicates with >
+BankingSystem "1" -- "1" Bank : part of >
+
+BankingSystem --> Database : stores/reads >
+Database "1" o-- "*" CommunicationPreference : persists >
+Database "1" o-- "*" Customer : persists >
+
+CommunicationPreference ..> EmailService : if EMAIL selected
+CommunicationPreference ..> SMSService : if SMS selected
+
+@enduml

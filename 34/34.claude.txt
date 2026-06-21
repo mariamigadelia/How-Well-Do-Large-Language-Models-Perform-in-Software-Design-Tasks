@@ -1,0 +1,70 @@
+@startuml LivestockManagementSystem
+
+skinparam classAttributeIconSize 0
+skinparam classBackgroundColor #F9F9F9
+skinparam classBorderColor #2C3E50
+skinparam ArrowColor #2C3E50
+
+title Livestock Farm Information Management System
+
+class LivestockRecord {
+    - recordNumber : String
+    - animalID : String
+    - birthdate : Date
+    - breed : String
+    --
+    + addRecord() : void
+    + updateRecord() : void
+    + getRecordDetails() : String
+    + assignPen(pen : Pen) : void
+}
+
+class Pen {
+    - penID : String
+    - location : String
+    - capacity : int
+    - currentOccupancy : int
+    --
+    + addAnimal() : void
+    + removeAnimal() : void
+    + isAvailable() : boolean
+}
+
+class HealthTracking {
+    - trackingCode : String
+    - healthData : String
+    - veterinaryVisit : Date
+    - symptoms : String
+    - treatmentPlan : String
+    --
+    + recordVisit() : void
+    + updateSymptoms() : void
+    + setTreatmentPlan() : void
+    + getHealthHistory() : String
+}
+
+class VaccinationSchedule {
+    - scheduleID : String
+    - scheduleDetails : String
+    - vaccinationDate : Date
+    - reminderDate : Date
+    - vaccinationHistory : List<String>
+    --
+    + setReminder() : void
+    + recordVaccination() : void
+    + getVaccinationHistory() : String
+    + updateSchedule() : void
+}
+
+' ===== Relationships =====
+
+' A pen can hold many livestock records; each animal references one pen
+Pen "1" o-- "0..*" LivestockRecord : houses >
+
+' Each livestock record has health tracking entries
+LivestockRecord "1" *-- "0..*" HealthTracking : monitored by >
+
+' Each livestock record has vaccination schedules
+LivestockRecord "1" *-- "0..*" VaccinationSchedule : scheduled for >
+
+@enduml

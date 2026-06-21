@@ -1,0 +1,94 @@
+@startuml
+title Agricultural Export Management System Class Diagram
+
+' ==================== ENUMERATIONS ====================
+enum CommodityStatus {
+  AVAILABLE
+  IN_TRANSIT
+  EXPIRED
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  SHIPPED
+  COMPLETED
+}
+
+enum ShipmentStatus {
+  PENDING
+  IN_PROGRESS
+  DELIVERED
+}
+
+enum DocumentType {
+  INVOICE
+  CERTIFICATE
+  LICENSE
+  SHIPPING_DOC
+}
+
+' ==================== COMPANY ====================
+class Company {
+  - companyID : String
+  - name : String
+  - address : String
+  - contactInfo : String
+  - certifications : String
+  - exportLicenses : String
+  + manageCommodities()
+  + manageOrders()
+  + manageShipments()
+  + manageDocuments()
+}
+
+' ==================== COMMODITY ====================
+class Commodity {
+  - commodityID : String
+  - name : String
+  - type : String
+  - description : String
+  - status : CommodityStatus
+  - qualityStandards : String
+  - shelfLife : int
+}
+
+' ==================== ORDER ====================
+class Order {
+  - orderID : String
+  - date : Date
+  - quantity : int
+  - destination : String
+  - status : OrderStatus
+}
+
+' ==================== SHIPMENT ====================
+class Shipment {
+  - shipmentNumber : String
+  - date : Date
+  - route : String
+  - status : ShipmentStatus
+}
+
+' ==================== DOCUMENT ====================
+class Document {
+  - documentID : String
+  - date : Date
+  - type : DocumentType
+  - details : String
+}
+
+' ==================== ASSOCIATIONS ====================
+Company "1" o-- "*" Commodity : handles >
+Company "1" o-- "*" Order : manages >
+Company "1" o-- "*" Shipment : tracks >
+Company "1" o-- "*" Document : generates >
+
+Order "1" --> "*" Commodity : includes >
+Shipment "1" --> "1" Order : linkedTo >
+Shipment "1" --> "1" Commodity : transports >
+Document "1" --> "1" Company : basedOn >
+Document "1" --> "1" Order : references >
+Document "1" --> "1" Shipment : references >
+
+@enduml

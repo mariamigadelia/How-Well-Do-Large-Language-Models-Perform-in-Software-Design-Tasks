@@ -1,0 +1,49 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+abstract class Ship {
+  -name: String
+  -registrationNumber: String
+}
+
+class PassengerShip {
+  -passengerCapacity: int
+}
+
+class ContainerShip {
+  -containerCapacity: int
+}
+
+class Restaurant {
+  -name: String
+  -numberOfSeats: int
+}
+
+class DieselEngine {
+  -engineNumber: String
+  -powerOutput: double
+}
+
+class Cylinder {
+  -cylinderNumber: int
+}
+
+class Valve {
+  -valveType: String
+}
+
+class CombustionChamber {
+  -volume: double
+}
+
+Ship <|-- PassengerShip
+Ship <|-- ContainerShip
+
+Ship "1" *-- "1..*" DieselEngine : has
+DieselEngine "1" *-- "1..*" Cylinder : comprises
+Cylinder "1" *-- "1..*" Valve : has
+Cylinder "1" *-- "1" CombustionChamber : has
+
+PassengerShip "1" *-- "1..*" Restaurant : has
+
+@enduml

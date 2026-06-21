@@ -1,0 +1,94 @@
+@startuml
+title Car Rental Management System - Class Diagram
+
+class CarRentalSystem {
+  + showAvailableCarsSortedByPrice()
+  + listRentedCars()
+  + submitCarRental()
+  + takeBackCar()
+  + updateRentalList()
+  + produceRentalReport()
+}
+
+class StoreAssistant {
+  - employeeId: int
+  - name: String
+  - designation: String
+  + searchAvailableCars()
+  + submitRentingCar()
+  + produceRentalReports()
+  + recordCustomerInformation()
+}
+
+class Car {
+  - plateNumber: String
+  - model: String
+  - dailyPrice: double
+  - status: String
+  + markAsAvailable()
+  + markAsRented()
+}
+
+class Customer {
+  - customerId: int
+  - name: String
+  - surname: String
+  - address: String
+  - rentedCarPlateNumber: String
+  - leasingTerms: String
+}
+
+class Rental {
+  - rentalCode: int
+  - carPlateNumber: String
+  - customerId: int
+  - rentalStartDate: Date
+  - rentalEndDate: Date
+  - terms: String
+  + startRental()
+  + endRental()
+  + checkOverdue()
+}
+
+class RentalReport {
+  - reportId: int
+  - date: Date
+  - rentedCarsList: String
+  - rentalSummary: String
+  + generateReport()
+}
+
+class OverdueNotice {
+  - noticeId: int
+  - noticeDate: Date
+  - reason: String
+  + sendNotice()
+}
+
+class MainOffice {
+  - officeId: int
+  - officeName: String
+  + sendOverdueNotice()
+}
+
+CarRentalSystem "1" -- "many" Car : manages
+CarRentalSystem "1" -- "many" Rental : tracks
+CarRentalSystem "1" -- "many" Customer : stores
+CarRentalSystem "1" -- "many" StoreAssistant : has
+
+StoreAssistant "1" -- "many" Rental : creates / updates
+StoreAssistant "1" -- "many" Customer : records
+StoreAssistant "1" -- "many" RentalReport : produces
+
+Customer "1" -- "many" Rental : makes
+Car "1" -- "0..1" Rental : rented in
+
+Rental "1" -- "1" Car : uses
+Rental "1" -- "1" Customer : belongs to
+RentalReport "1" -- "many" Rental : includes
+
+MainOffice "1" -- "many" OverdueNotice : sends
+OverdueNotice "many" -- "1" Rental : related to
+OverdueNotice "many" -- "1" Customer : sent for
+
+@enduml

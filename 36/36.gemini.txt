@@ -1,0 +1,92 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam monochrome true
+left to right direction
+
+title Travel Expense Management System - Class Diagram
+
+' --- Core Domain Classes ---
+
+class Employee {
+    - employeeId: String
+    - name: String
+    - contactInfo: String
+    - travelExpenseHistory: List<String>
+    + submitReport(report: ExpenseReport): Void
+    + viewReimbursementStatus(): List<Reimbursement>
+}
+
+class ExpenseReport {
+    - reportId: String
+    - submissionDate: Date
+    - totalAmount: Double
+    - isCompliant: Boolean
+    + validatePolicyCompliance(): Boolean
+}
+
+class ExpenseItem {
+    - itemId: String
+    - expenseCategory: String
+    - amount: Double
+    - dateIncurred: Date
+    - receiptImageLink: String
+}
+
+class ApprovalWorkflow {
+    - approvalCode: String
+    - approvalStatus: String
+    - reviewerNotes: String
+    + approveReport(): Void
+    + rejectReport(reason: String): Void
+}
+
+class Reimbursement {
+    - reimbursementId: String
+    - summaryOfExpenses: String
+    - reimbursementAmount: Double
+    - processingDate: Date
+    - paymentStatus: String
+    + processPayment(): Void
+}
+
+class ExpenseAnalytics {
+    - budgetLimit: Double
+    - totalSpentAmount: Double
+    - categoryTotals: Map<String, Double>
+    + trackBudgetAdherence(): Double
+    + generateCategorySpendingAnalysis(): String
+}
+
+' --- Relationships & Multiplicities ---
+
+' An employee can submit multiple expense reports over time
+Employee "1" -- "*" ExpenseReport : submits >
+
+' An Expense Report details multiple individual itemized expenses (Composition)
+ExpenseReport "1" *-- "1..*" ExpenseItem : details >
+
+' Approval is tightly linked to an Expense Report to authorize it
+ExpenseReport "1" -- "1" ApprovalWorkflow : requires >
+
+' Reimbursement summarizes and executes on approved workflows
+ApprovalWorkflow "1" -- "0..1" Reimbursement : triggers >
+
+' Analytics processes data across reports to evaluate budgets
+ExpenseAnalytics "1" ..> "*" ExpenseReport : analyzes >
+ExpenseAnalytics "1" ..> "*" ExpenseItem : parses categories from >
+
+note top of ExpenseReport
+  <b>Compliance Checking:</b>
+  validatePolicyCompliance() runs structural checks 
+  on individual ExpenseItems and receipts against 
+  global corporate travel guidelines.
+end note
+
+note bottom of ExpenseAnalytics
+  <b>Corporate Spending Optimization:</b>
+  Aggregates data metrics globally to map 
+  out category distribution profiles and 
+  flag localized budget overruns.
+end note
+
+@endum

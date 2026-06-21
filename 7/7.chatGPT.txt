@@ -1,0 +1,56 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+class TimberFramedHouse {
+  -numberOfRooms: int
+  -numberOfFloors: int
+}
+
+abstract class BuildingMaterial {
+  -materialId: String
+}
+
+class WoodenLog
+class AdobeBrick
+class Nail
+
+class Carpenter {
+  -name: String
+  -hourlyWage: double
+}
+
+class Tool {
+  -toolId: String
+}
+
+class Hammer
+class Saw
+
+BuildingMaterial <|-- WoodenLog
+BuildingMaterial <|-- AdobeBrick
+BuildingMaterial <|-- Nail
+
+Tool <|-- Hammer
+Tool <|-- Saw
+
+TimberFramedHouse "1" *-- "5..10" WoodenLog : consists of
+TimberFramedHouse "1" *-- "200..400" AdobeBrick : consists of
+TimberFramedHouse "1" *-- "1000..2000" Nail : consists of
+
+TimberFramedHouse "1" -- "1..*" Carpenter : built by
+Carpenter "0..1" -- "1" TimberFramedHouse : works on
+
+Carpenter "1" *-- "1" Hammer : owns/uses
+Carpenter "1" *-- "1" Saw : owns/uses
+
+note right of BuildingMaterial
+Each material item is part of
+exactly one timber-framed house.
+end note
+
+note bottom of Carpenter
+Each carpenter can work on
+at most one house at a time.
+end note
+
+@enduml

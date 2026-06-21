@@ -1,0 +1,71 @@
+@startuml
+title Car Rental Gallery Management System Class Diagram
+
+' ==================== STORE ASSISTANT ====================
+class StoreAssistant {
+  - employeeID : String
+  - name : String
+  - designation : String
+  + searchAvailableCars() : List<Car>
+  + submitRental(r : Rental) : void
+  + produceRentalReport(date : Date) : RentalReport
+  + updateRentalList(r : Rental) : void
+  + recordCustomer(c : Customer) : void
+}
+
+' ==================== CAR ====================
+class Car {
+  - plate : String
+  - model : String
+  - dailyPrice : double
+  - isAvailable : boolean
+  + markAsRented() : void
+  + markAsAvailable() : void
+}
+
+' ==================== CUSTOMER ====================
+class Customer {
+  - customerID : String
+  - name : String
+  - surname : String
+  - address : String
+  - rentedCarPlate : String
+  - leasingTerms : String
+}
+
+' ==================== RENTAL ====================
+class Rental {
+  - rentalCode : String
+  - carPlate : String
+  - customerID : String
+  - startDate : Date
+  - endDate : Date
+  - terms : String
+}
+
+' ==================== RENTAL REPORT ====================
+class RentalReport {
+  - reportDate : Date
+  - rentedCars : List<Rental>
+  - rentalSummary : String
+  + generateReport() : void
+}
+
+' ==================== MAIN OFFICE ====================
+class MainOffice {
+  + sendOverdueNotice(c : Customer, r : Rental) : void
+}
+
+' ==================== RELATIONSHIPS ====================
+StoreAssistant "1" --> "*" Car : manages >
+StoreAssistant "1" --> "*" Rental : updates >
+StoreAssistant "1" --> "*" RentalReport : produces >
+StoreAssistant "1" --> "*" Customer : records >
+
+Rental "1" --> "1" Car : references >
+Rental "1" --> "1" Customer : belongsTo >
+
+MainOffice --> Customer : notifies >
+MainOffice --> Rental : checksOverdue >
+
+@enduml

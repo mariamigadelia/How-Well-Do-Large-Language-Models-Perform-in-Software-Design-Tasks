@@ -1,0 +1,104 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+class AcademicProgram {
+  -programNumber: String
+  -programName: String
+  +addCourse(course: Course)
+  +removeCourse(course: Course)
+}
+
+class SoftwareEngineeringDepartment {
+  -departmentName: String
+}
+
+class Course {
+  -courseName: String
+  -courseCode: String
+  -startTime: Time
+  -endTime: Time
+  -courseDays: String
+  -weeklyCourseHours: int
+  -quotaLimit: int
+  +increaseQuota(amount: int)
+  +decreaseQuota(amount: int)
+  +changeWeeklyCourseHours(hours: int)
+  +changeCourseDays(days: String)
+}
+
+class Classroom {
+  -classId: String
+  -capacity: int
+  -floor: int
+  -block: String
+}
+
+class Instructor {
+  -name: String
+  -surname: String
+  -title: String
+  -specialty: String
+  +lecture(course: Course)
+  +mentor(student: Student)
+  +increaseCourseQuota(course: Course, amount: int)
+  +decreaseCourseQuota(course: Course, amount: int)
+  +changeWeeklyCourseHours(course: Course, hours: int)
+  +changeCourseDays(course: Course, days: String)
+  +addCourse(course: Course)
+  +dropCourse(course: Course)
+}
+
+class Student {
+  -studentNumber: String
+  -name: String
+  -major: String
+  +enrollCourse(course: Course)
+  +dropCourse(course: Course)
+  +receiveTranscript(): Transcript
+  +requestDocument(type: String): DocumentRequest
+  +conductSurvey(survey: Survey)
+}
+
+class Transcript {
+  -transcriptId: String
+  -issueDate: Date
+}
+
+class DocumentRequest {
+  -requestId: String
+  -documentType: String
+  -requestDate: Date
+  -status: String
+}
+
+class Survey {
+  -surveyId: String
+  -title: String
+  +submit()
+}
+
+SoftwareEngineeringDepartment "1" *-- "1..*" AcademicProgram
+AcademicProgram "1" *-- "1..*" Course
+
+Course "1" --> "1" Classroom : held in
+Course "1" -- "1..*" Instructor : taught by
+Instructor "1" -- "0..*" Student : mentors
+Student "0..*" -- "0..*" Course : enrolls in
+
+Student --> Transcript
+Student --> DocumentRequest
+Student --> Survey
+
+note right of Instructor
+Instructors lecture and mentor
+students according to specialty.
+They can update quota, weekly hours,
+and course days.
+end note
+
+note bottom of Course
+Course contains schedule,
+classroom, quota, and instructors.
+end note
+
+@enduml

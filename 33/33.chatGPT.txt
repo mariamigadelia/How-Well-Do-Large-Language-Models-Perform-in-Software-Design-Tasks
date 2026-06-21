@@ -1,0 +1,78 @@
+@startuml
+title Conference Registration System - Class Diagram
+
+class ConferenceRegistrationSystem {
+  + registerAttendee()
+  + processPayment()
+  + issueTicket()
+  + trackAttendance()
+}
+
+class Attendee {
+  - attendeeId: int
+  - name: String
+  - email: String
+  - address: String
+}
+
+class Registration {
+  - registrationNumber: int
+  - date: Date
+  - eventOptions: String
+  + signUp()
+}
+
+class Payment {
+  - paymentId: int
+  - date: Date
+  - purpose: String
+  - paymentAmount: double
+  + processPayment()
+}
+
+class Ticket {
+  - ticketNumber: int
+  - eventDetails: String
+  + issueTicket()
+}
+
+class Attendance {
+  - attendanceId: int
+  - timestamp: DateTime
+  - sessionDetails: String
+  + recordCheckIn()
+}
+
+class Conference {
+  - conferenceId: int
+  - conferenceName: String
+  - location: String
+  - startDate: Date
+  - endDate: Date
+}
+
+class Session {
+  - sessionId: int
+  - sessionTitle: String
+  - sessionDetails: String
+  - startTime: DateTime
+  - endTime: DateTime
+}
+
+ConferenceRegistrationSystem "1" -- "many" Registration : manages
+ConferenceRegistrationSystem "1" -- "many" Payment : processes
+ConferenceRegistrationSystem "1" -- "many" Ticket : issues
+ConferenceRegistrationSystem "1" -- "many" Attendance : tracks
+
+Attendee "1" -- "many" Registration : signs up
+Registration "1" -- "1" Payment : requires
+Registration "1" -- "1" Ticket : receives
+Ticket "1" -- "1" Attendee : issued to
+
+Conference "1" -- "many" Registration : has
+Conference "1" -- "many" Session : includes
+
+Attendance "many" -- "1" Attendee : check-in by
+Attendance "many" -- "1" Session : for
+
+@enduml

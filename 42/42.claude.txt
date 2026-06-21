@@ -1,0 +1,95 @@
+@startuml Agricultural Export Management System
+
+' Class Definitions
+
+class Company {
+  - companyID : String
+  - name : String
+  - address : String
+  - contactInfo : String
+  - certifications : String
+  - exportLicenses : String
+  --
+  + addCommodity() : void
+  + createOrder() : void
+  + trackShipment() : void
+  + generateDocument() : void
+}
+
+class Commodity {
+  - commodityID : String
+  - name : String
+  - type : String
+  - description : String
+  - status : String
+  - qualityStandards : String
+  - shelfLife : String
+  --
+  + updateStatus() : void
+  + checkQuality() : boolean
+}
+
+class Order {
+  - orderID : String
+  - date : Date
+  - quantity : int
+  - destination : String
+  - orderStatus : String
+  --
+  + createOrder() : void
+  + updateStatus() : void
+  + getOrderDetails() : String
+}
+
+class Shipment {
+  - shipmentNumber : String
+  - date : Date
+  - route : String
+  - status : String
+  --
+  + trackShipment() : String
+  + updateRoute() : void
+  + updateStatus() : void
+}
+
+class Document {
+  - documentID : String
+  - date : Date
+  - type : String
+  - shipmentDetails : String
+  --
+  + generateDocument() : void
+  + storeRecord() : void
+  + retrieveDocument() : Document
+}
+
+' Relationships
+
+' A company can handle multiple commodities
+Company "1" --> "0..*" Commodity : handles
+
+' A company can have multiple orders
+Company "1" --> "0..*" Order : places
+
+' A company can have multiple shipments
+Company "1" --> "0..*" Shipment : manages
+
+' A company can have multiple documents
+Company "1" --> "0..*" Document : owns
+
+' An order is associated with commodities being exported
+Order "1" --> "1..*" Commodity : includes
+
+' A shipment is linked to a specific order
+Order "1" --> "0..*" Shipment : results in
+
+' A shipment is linked to a specific commodity
+Shipment "0..*" --> "1" Commodity : transports
+
+' Documents are generated based on order details
+Order "1" --> "0..*" Document : generates
+
+' Documents are generated based on shipment details
+Shipment "1" --> "0..*" Document : produces
+
+@enduml

@@ -1,0 +1,146 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam monochrome true
+skinparam ranking max
+left to right direction
+
+title Computerized Banking Network - Class Diagram
+
+' --- Core Network & Bank Infrastructure ---
+
+class CentralComputer {
+    - networkRoutingTable: Map
+    + routeTransaction(transaction: Transaction): Response
+    + reconcileDailyTotals(): Void
+}
+
+class BankComputer {
+    - bankId: String
+    - bankName: String
+    + verifyAccount(cardNum: String, pin: String): Boolean
+    + processTransaction(tx: Transaction): Response
+    + updateBalance(accId: String, amount: Double): Void
+}
+
+class Account {
+    - accountId: String
+    - balance: Double
+    - lock: ReentrantLock
+    + acquireLock(): Boolean
+    + releaseLock(): Void
+    + getBalance(): Double
+    + setBalance(amount: Double): Void
+}
+
+' --- Access Points (ATMs & Cashier Stations) ---
+
+class ATM {
+    - atmId: String
+    - location: String
+    - cashAvailable: Double
+    + acceptCard(card: CashCard): Void
+    + verifyPIN(pin: String): Boolean
+    + selectTransaction(): Void
+    + dispenseCash(amount: Double): Void
+    + printReceipt(tx: Transaction): Void
+}
+
+class CashierStation {
+    - stationId: String
+    + enterAccountData(accData: String): Void
+    + enterTransactionData(txData: String): Void
+}
+
+' --- Users & Identification ---
+
+class CashCard {
+    - cardNumber: String
+    - bankCode: String
+    - expirationDate: Date
+    - encryptedPIN: String
+}
+
+class Customer {
+    - customerId: String
+    - name: String
+    - address: String
+}
+
+' --- Transactions & Security ---
+
+abstract class Transaction {
+    - transactionId: String
+    - timestamp: DateTime
+    - amount: Double
+    - status: String
+    + {abstract} execute(): Boolean
+}
+
+class Withdrawal {
+    + execute(): Boolean
+}
+
+class Deposit {
+    + execute(): Boolean
+}
+
+class Transfer {
+    - targetAccountId: String
+    + execute(): Boolean
+}
+
+class SecurityManager {
+    + encryptData(data: String): String
+    + decryptData(data: String): String
+    + auditAccess(logEntry: String): Void
+}
+
+class CentralTransactionLog {
+    - logId: String
+    - details: String
+    + saveRecord(): Void
+}
+
+' --- Relationships ---
+
+' Central Network Hub
+CentralComputer "1" -- "*" ATM : Connects and routes >
+CentralComputer "1" -- "*" BankComputer : Clears transactions with >
+
+' Bank Owns its Data and Stations
+BankComputer "1" *-- "*" Account : Maintains >
+BankComputer "1" *-- "*" CashierStation : Owns and communicates with >
+BankComputer "1" -- "*" CashCard : Issues >
+
+' ATM Interactions
+ATM ..> CashCard : Accepts >
+ATM "1" -- "*" Transaction : Initiates >
+CashierStation "1" -- "*" Transaction : Initiates >
+
+' Customer ownership (used for cost apportioning)
+Customer "1" -- "1" CashCard : Holds >
+BankComputer "1" -- "*" Customer : Has >
+
+' Inheritance & Logging
+Transaction <|-- Withdrawal
+Transaction <|-- Deposit
+Transaction <|-- Transfer
+
+CentralComputer "1" -- "1" CentralTransactionLog : Records entries to >
+Transaction ..> SecurityManager : Secures via >
+
+note top of Account
+  <b>Concurrency Handling:</b>
+  Uses explicit locking mechanisms (e.g., lock())
+  to handle concurrent access to the same account
+  safely during simultaneous transaction processing.
+end note
+
+note bottom of Customer
+  <b>Cost Apportionment:</b>
+  Shared cost is apportioned to banks based on
+  the total count of registered Customers holding 
+  a CashCard under that specific bank.
+end note
+
+@endum

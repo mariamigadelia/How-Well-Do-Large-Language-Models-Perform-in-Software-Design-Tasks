@@ -1,0 +1,50 @@
+@startuml
+title Timber-Framed House Class Diagram
+
+class TimberFramedHouse {
+    -numLogs : int
+    -numBricks : int
+    -numNails : int
+    -rooms : int
+    -floors : int
+    +getDetails() : String
+}
+
+class WoodenLog {
+    -logId : String
+}
+
+class AdobeBrick {
+    -brickId : String
+}
+
+class Nail {
+    -nailId : String
+}
+
+class Carpenter {
+    -name : String
+    -hourlyWage : float
+    +workOnHouse(house : TimberFramedHouse)
+}
+
+class Hammer {
+    -hammerId : String
+}
+
+class Saw {
+    -sawId : String
+}
+
+' Relationships
+TimberFramedHouse --> WoodenLog : consists of 5..10
+TimberFramedHouse --> AdobeBrick : consists of 200..400
+TimberFramedHouse --> Nail : consists of 1000..2000
+Carpenter --> TimberFramedHouse : responsible for 1
+Carpenter --> Hammer : uses exactly 1
+Carpenter --> Saw : uses exactly 1
+WoodenLog --> TimberFramedHouse : part of exactly 1
+AdobeBrick --> TimberFramedHouse : part of exactly 1
+Nail --> TimberFramedHouse : part of exactly 1
+
+@enduml

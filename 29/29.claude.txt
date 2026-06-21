@@ -1,0 +1,56 @@
+@startuml Organic_Farming_Certification_System
+
+skinparam classAttributeIconSize 0
+skinparam classBorderColor #2E7D32
+skinparam shadowing true
+
+title Organic Farming Certification System - Class Diagram
+
+class Certification {
+    - certificationNumber : String
+    - date : Date
+    - description : String
+    - validity : String
+    --
+    + assessFarmEligibility() : boolean
+    + conductInspection() : void
+    + issueCertificate() : void
+}
+
+class Farm {
+    - farmID : String
+    - name : String
+    - address : String
+    - gpsCoordinates : String
+    --
+    + getFarmDetails() : String
+    + updateFarmInfo() : void
+}
+
+class Monitoring {
+    - date : Date
+    - description : String
+    - outcome : String
+    --
+    + trackFarmingActivities() : void
+    + verifyCompliance() : boolean
+    + storeResults() : void
+}
+
+class Record {
+    - recordNumber : String
+    - renewalDate : Date
+    - status : String
+    --
+    + manageRenewal() : void
+    + updateCertificationStatus() : void
+}
+
+' Relationships
+Certification "1" --> "1..*" Farm : certifies >
+Certification "1" o-- "1..*" Monitoring : includes >
+Certification "1" *-- "1" Record : maintains >
+Farm "1" -- "0..*" Monitoring : is monitored by >
+Record "1" --> "1" Certification : tracks >
+
+@enduml

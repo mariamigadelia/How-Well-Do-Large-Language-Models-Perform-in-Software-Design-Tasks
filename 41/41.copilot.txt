@@ -1,0 +1,101 @@
+@startuml
+title IPO Application System Class Diagram
+
+' ==================== ENUMERATIONS ====================
+enum CustomerType {
+  RETAIL
+  CORPORATE
+}
+
+enum PlatformType {
+  ANDROID
+  IOS
+  WEB
+}
+
+enum DocumentFormat {
+  DOCX
+  PDF
+}
+
+enum ApplicationStatus {
+  PENDING
+  SUCCESSFUL
+  REJECTED
+  BLOCKED
+}
+
+' ==================== CUSTOMER ====================
+class Customer {
+  - customerID : String
+  - name : String
+  - surname : String
+  - email : String
+  - telephone : String
+  - type : CustomerType
+  - unpaidCreditCard : boolean
+  - blockedAccount : boolean
+  - fraudUser : boolean
+  - failedAttempts : int
+  + isEligibleForIPO() : boolean
+}
+
+class RetailCustomer
+
+Customer <|-- RetailCustomer
+
+' ==================== APPLICATION ====================
+class IPOApplication {
+  - applicationID : String
+  - status : ApplicationStatus
+  - companyName : String
+  - numberOfShares : int
+  - amountPaid : double
+  + applyForIPO(doc : Document) : boolean
+  + validateDocument(doc : Document) : boolean
+}
+
+class Document {
+  - documentID : String
+  - format : DocumentFormat
+  - fileName : String
+  + validateFormat() : boolean
+}
+
+IPOApplication --> Document : requires >
+
+' ==================== PLATFORM ====================
+class OnlineBankingSystem {
+  - systemID : String
+  - platform : PlatformType
+  + createAccount()
+  + accessInvestmentsMenu()
+}
+
+class InvestmentsMenu {
+  - menuID : String
+  + openIPOApplicationTab()
+}
+
+OnlineBankingSystem --> InvestmentsMenu : contains >
+InvestmentsMenu --> IPOApplication : initiates >
+
+' ==================== COMMUNICATION ====================
+class EmailService {
+  + sendCustomerEmail(c : Customer, app : IPOApplication)
+  + sendCompanyEmail(companyName : String, app : IPOApplication)
+  + sendRejectionEmail(c : Customer, app : IPOApplication)
+}
+
+class CallCentre {
+  + requestIPOAccess(c : Customer)
+}
+
+IPOApplication --> EmailService : notifies >
+Customer --> CallCentre : contacts >
+
+' ==================== ASSOCIATIONS ====================
+Customer "1" --> "*" IPOApplication : applies >
+IPOApplication "1" --> "1" Customer : belongsTo >
+
+@enduml

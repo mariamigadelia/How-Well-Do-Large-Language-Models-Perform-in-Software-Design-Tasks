@@ -1,0 +1,196 @@
+@startuml IPO_Application_System
+
+' ===================== ENUMS =====================
+enum CustomerType {
+  RETAIL
+  CORPORATE
+  PRIVATE
+}
+
+enum DocumentFormat {
+  DOCX
+  PDF
+}
+
+enum ApplicationStatus {
+  IN_PROGRESS
+  SUBMITTED
+  APPROVED
+  REJECTED
+  RESTRICTED
+}
+
+enum Platform {
+  ANDROID
+  IOS
+  WEB
+}
+
+' ===================== CUSTOMER =====================
+abstract class Customer {
+  - customerId : String
+  - name : String
+  - surname : String
+  - email : String
+  - telephone : String
+  - customerType : CustomerType
+  - isFraudUser : boolean
+  + isEligibleForIPO() : boolean
+}
+
+class RetailCustomer extends Customer {
+  + applyForIPO() : IPOApplication
+  + requestAccessViaCallCentre() : void
+}
+
+class Account {
+  - accountId : String
+  - isBlocked : boolean
+  + isBlocked() : boolean
+}
+
+class CreditCard {
+  - cardId : String
+  - hasUnpaidPayments : boolean
+  + hasUnpaidPayments() : boolean
+}
+
+' ===================== IPO APPLICATION =====================
+class IPOApplication {
+  - applicationId : String
+  - status : ApplicationStatus
+  - failedAttempts : int
+  - sharesPurchased : int
+  - amountPaid : double
+  - applicationDate : Date
+  + validateEligibility() : boolean
+  + uploadDocument(doc : Document) : boolean
+  + confirmConsent() : boolean
+  + submit() : void
+  + canAttempt() : boolean
+  + incrementFailedAttempts() : void
+  + restrictUser() : void
+}
+
+class Document {
+  - fileName : String
+  - format : DocumentFormat
+  - fileSize : long
+  + validateFormat() : boolean
+}
+
+class ConsentPopup {
+  - message : String
+  - sharedFields : List<String>
+  + display() : void
+  + accept() : boolean
+}
+
+' ===================== COMPANY =====================
+class Company {
+  - companyId : String
+  - companyName : String
+  - totalShares : int
+  + approveApplication(app : IPOApplication) : void
+  + rejectApplication(app : IPOApplication) : void
+}
+
+' ===================== EMAIL =====================
+class EmailService {
+  + sendCustomerEmail(email : Email) : void
+  + sendCompanyEmail(email : Email) : void
+  + sendRejectionEmail(email : Email) : void
+}
+
+class Email {
+  - recipient : String
+  - subject : String
+  - format : String = "HTML"
+  - customerName : String
+  - customerSurname : String
+  - customerEmail : String
+  - customerTelephone : String
+  - companyName : String
+  - sharesPurchased : int
+  - amountPaid : double
+  + buildContent() : String
+}
+
+' ===================== PLATFORM / UI =====================
+abstract class BankingApplication {
+  - platform : Platform
+  + openInvestmentsMenu() : InvestmentsMenu
+}
+
+class MobileApplication extends BankingApplication {
+}
+
+class WebApplication extends BankingApplication {
+}
+
+class AndroidApp extends MobileApplication {
+}
+
+class iOSApp extends MobileApplication {
+}
+
+class InvestmentsMenu {
+  - menuName : String = "Investments"
+  - tabs : List<Tab>
+  + addTab(tab : Tab) : void
+}
+
+class IPOApplicationTab {
+  - tabName : String = "IPO Application"
+  - actionName : String = "Apply for IPO"
+  - position : String = "END"
+  + launchApplication() : IPOApplication
+}
+
+class CallCentre {
+  - phoneNumber : String
+  + grantIPOAccess(customer : RetailCustomer) : void
+}
+
+' ===================== RELATIONSHIPS =====================
+Customer "1" o-- "*" Account : owns
+Customer "1" o-- "*" CreditCard : holds
+
+RetailCustomer "1" --> "*" IPOApplication : makes
+IPOApplication "1" --> "1" Document : requires
+IPOApplication "1" --> "1" ConsentPopup : confirms
+IPOApplication "*" --> "1" Company : appliedTo
+
+IPOApplication ..> EmailService : triggers
+EmailService ..> Email : creates
+Company ..> EmailService : rejection triggers
+
+BankingApplication "1" o-- "1" InvestmentsMenu
+InvestmentsMenu "1" o-- "*" IPOApplicationTab : "(added to end)"
+IPOApplicationTab ..> IPOApplication : initiates
+
+RetailCustomer ..> CallCentre : requests access
+CallCentre ..> IPOApplication : enables retry
+
+note right of IPOApplication
+  Eligibility rules:
+  - Customer must be RETAIL
+  - No unpaid credit card payments
+  - No blocked account
+  - Not flagged as fraud user
+  - Max 5 attempts (6th blocked,
+    call centre required)
+end note
+
+note bottom of Document
+  Only ".docx" or ".pdf" allowed.
+  Other formats => validation error.
+end note
+
+note bottom of Email
+  HTML format for future compatibility.
+  Sent to BOTH customer & company
+  on successful application.
+end note
+
+@enduml

@@ -1,0 +1,74 @@
+@startuml
+title WatCard System Class Diagram
+
+' ==================== STUDENT ====================
+class Student {
+  - studentNumber : String
+  - name : String
+  - email : String
+  - telephone : String
+  - major : String
+  - cardValidity : boolean
+  + useWatCard() : void
+}
+
+' ==================== WATCARD ====================
+class WatCard {
+  - cardID : String
+  - validity : boolean
+  + gainAccess(area : SecureArea) : void
+  + makePurchase(p : Purchase) : void
+  + depositMoney(d : Deposit) : void
+}
+
+Student "1" --> "1" WatCard : holds >
+
+' ==================== ACCOUNT ====================
+class Account {
+  - accountID : String
+  - balance : double
+  + deposit(amount : double) : void
+  + withdraw(amount : double) : void
+}
+
+WatCard "1" --> "1" Account : linked >
+
+' ==================== SECURE AREA ====================
+class SecureArea {
+  - areaID : String
+  - description : String
+  + grantAccess(s : Student) : boolean
+}
+
+WatCard --> SecureArea : providesAccess >
+
+' ==================== TRANSACTIONS ====================
+class Deposit {
+  - depositID : String
+  - amount : double
+  - date : Date
+  + processDeposit() : void
+}
+
+class Purchase {
+  - purchaseID : String
+  - type : String  ' Parking, Library, Equipment Rental, Transcript
+  - amount : double
+  - date : Date
+  + processPurchase() : void
+}
+
+Account --> Deposit : records >
+Account --> Purchase : records >
+
+' ==================== USAGE RECORD ====================
+class UsageRecord {
+  - usageID : String
+  - timestamp : DateTime
+  - action : String
+  + logUsage() : void
+}
+
+WatCard --> "*" UsageRecord : logs >
+
+@enduml

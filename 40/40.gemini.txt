@@ -1,0 +1,98 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam monochrome true
+left to right direction
+
+title Academic Program Management System - Class Diagram
+
+' --- Classes ---
+
+class AcademicProgram {
+    - programNumber: String
+    - name: String
+    + addCourse(course: Course): Void
+    + removeCourse(course: Course): Void
+}
+
+class Course {
+    - courseCode: String
+    - courseName: String
+    - startTime: Time
+    - endTime: Time
+    - daysOfWeek: List<String>
+    - quotaLimit: Integer
+    - weeklyHours: Integer
+    + setQuotaLimit(limit: Integer): Void
+    + setWeeklyHours(hours: Integer): Void
+    + setDaysOfWeek(days: List<String>): Void
+}
+
+class Classroom {
+    - classId: String
+    - capacity: Integer
+    - floor: Integer
+    - block: String
+}
+
+class Instructor {
+    - name: String
+    - surname: String
+    - title: String
+    - specialty: String
+    + lecture(): Void
+    + mentor(student: Student): Void
+    + adjustQuota(course: Course, newLimit: Integer): Void
+    + modifyCourseSchedule(course: Course, hours: Integer, days: List<String>): Void
+    + assignCourse(course: Course): Void
+    + dropCourse(course: Course): Void
+}
+
+class Student {
+    - studentNumber: String
+    - name: String
+    - major: String
+    + enrollCourse(course: Course): Void
+    + dropCourse(course: Course): Void
+    + requestTranscript(): Transcript
+    + requestDocument(docType: String): Document
+    + submitSurvey(survey: Survey): Void
+}
+
+' --- Stub Helper Classes for Completeness ---
+class Transcript { }
+class Document { }
+class Survey { }
+
+' --- Relationships & Multiplicities ---
+
+' Program and Course Structure
+AcademicProgram "1" *-- "1..*" Course : consists of >
+
+' Course Logistics Assignments
+Course "*" -- "1" Classroom : hosted in >
+Course "*" -- "1..*" Instructor : taught by >
+
+' Student Interactions
+Student "*" -- "*" Course : enrolls in >
+Instructor "1" -- "*" Student : mentors >
+
+' Structural Dependency returns
+Student ..> Transcript : receives >
+Student ..> Document : requests >
+Student ..> Survey : conducts >
+
+note top of Course
+  <b>Schedule Attributes:</b>
+  Encapsulates start/end times, 
+  weekly hour allocations, and 
+  active days (e.g., ["Monday", "Wednesday"]).
+end note
+
+note bottom of Instructor
+  <b>Quota & Schedule Control:</b>
+  Methods map directly to requirements allowing 
+  instructors to alter quota constraints, modify 
+  weekly hours, or drop courses from their load.
+end note
+
+@endum

@@ -1,0 +1,83 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam monochrome true
+left to right direction
+
+title Organic Farming Certification System - Class Diagram
+
+' --- Core Domain Classes ---
+
+class Farm {
+    - farmId: String
+    - name: String
+    - address: String
+    - gpsCoordinates: String
+    + getFarmProfile(): String
+}
+
+class Certification {
+    - certificationNumber: String
+    - date: Date
+    - description: String
+    - validityPeriod: String
+    + assessEligibility(farm: Farm): Boolean
+    + conductInspection(): Void
+    + issueCertificate(): CertificateFile
+}
+
+class CertificateFile {
+    - certificateId: String
+    - issueDate: Date
+    - digitalSignature: String
+    + printCertificate(): Void
+}
+
+class MonitoringActivity {
+    - activityId: String
+    - date: Date
+    - description: String
+    - outcome: String
+    + trackFarmingActivity(activityDetails: String): Void
+    + verifyCompliance(organicStandards: List<String>): Boolean
+    + storeResults(): Void
+}
+
+class CertificationRecord {
+    - recordNumber: String
+    - renewalDate: Date
+    - status: String
+    + manageRenewalProcess(): Void
+    + updateCertificationStatus(newStatus: String): Void
+}
+
+' --- Relationships & Multiplicities ---
+
+' A farm undergoes the certification process and is monitored
+Farm "1" -- "*" Certification : undergoes >
+Farm "1" *-- "*" MonitoringActivity : monitored for >
+Farm "1" -- "1" CertificationRecord : tied to >
+
+' Certification output
+Certification "1" ..> "1" CertificateFile : generates >
+
+' Record keeping tracks the active certification data over time
+CertificationRecord "1" -- "1" Certification : tracks data of >
+CertificationRecord ..> MonitoringActivity : reviews history from >
+
+note top of Certification
+  <b>Process Loop:</b>
+  Methods map directly to core requirements:
+  assessing initial eligibility, performing 
+  physical inspections, and generating 
+  the finalized certificate file.
+end note
+
+note bottom of CertificationRecord
+  <b>Compliance Management:</b>
+  The Record section acts as the persistent lifecycle 
+  manager. It coordinates renewal dates and automatically 
+  updates statuses (e.g., "Active", "Pending Renewal") 
+  based on Monitoring results.
+end note
+
+@endum

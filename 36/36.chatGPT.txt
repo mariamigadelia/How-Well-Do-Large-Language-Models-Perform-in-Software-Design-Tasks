@@ -1,0 +1,72 @@
+@startuml
+title Travel Expense Management System - Class Diagram
+
+class TravelExpenseManagementSystem {
+  + submitExpenseReport()
+  + processApproval()
+  + processReimbursement()
+  + generateExpenseAnalytics()
+}
+
+class Employee {
+  - employeeId: int
+  - name: String
+  - contactInformation: String
+  - travelExpenseHistory: String
+  + submitExpenseReport()
+}
+
+class ExpenseReport {
+  - reportId: int
+  - expenseCategory: String
+  - receipt: String
+  + createReport()
+  + submitForApproval()
+}
+
+class Approval {
+  - approvalCode: int
+  - approvalStatus: String
+  + approveReport()
+  + rejectReport()
+}
+
+class Reimbursement {
+  - reimbursementId: int
+  - reimbursementAmount: double
+  - processingDate: Date
+  + processReimbursement()
+}
+
+class ExpenseAnalytics {
+  - analyticsId: int
+  - budgetTracking: String
+  - expenseCategoryAnalysis: String
+  + trackBudget()
+  + analyzeExpenseCategories()
+}
+
+class CorporatePolicy {
+  - policyId: int
+  - policyName: String
+  - travelExpenseGuidelines: String
+  + checkCompliance()
+}
+
+TravelExpenseManagementSystem "1" -- "many" Employee : manages
+TravelExpenseManagementSystem "1" -- "many" ExpenseReport : tracks
+TravelExpenseManagementSystem "1" -- "many" Approval : handles
+TravelExpenseManagementSystem "1" -- "many" Reimbursement : processes
+TravelExpenseManagementSystem "1" -- "1" ExpenseAnalytics : offers
+
+Employee "1" -- "many" ExpenseReport : submits
+ExpenseReport "1" -- "1" Approval : requires
+Approval "1" -- "0..1" Reimbursement : creates
+Reimbursement "1" -- "1" ExpenseReport : summarizes
+
+ExpenseAnalytics ..> ExpenseReport : analyzes
+ExpenseAnalytics ..> Reimbursement : tracks spending
+ExpenseReport ..> CorporatePolicy : follows
+Approval ..> CorporatePolicy : checks compliance
+
+@enduml

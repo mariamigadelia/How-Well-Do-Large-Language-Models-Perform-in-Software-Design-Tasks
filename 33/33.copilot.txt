@@ -1,0 +1,58 @@
+@startuml
+title Conference Registration System Class Diagram
+
+' ==================== REGISTRATION ====================
+class Registration {
+  - registrationNumber : String
+  - registrationDate : Date
+  - name : String
+  - email : String
+  - address : String
+  - eventOptions : String
+  + signUp() : void
+}
+
+' ==================== PAYMENT ====================
+class Payment {
+  - paymentID : String
+  - paymentDate : Date
+  - purpose : String
+  - amount : double
+  + processPayment() : void
+}
+
+Registration "1" --> "1" Payment : requires >
+
+' ==================== TICKET ====================
+class Ticket {
+  - ticketNumber : String
+  - eventDetails : String
+  + issueTicket(r : Registration) : void
+}
+
+Registration "1" --> "1" Ticket : issues >
+
+' ==================== ATTENDANCE ====================
+class Attendance {
+  - attendanceID : String
+  - timestamp : DateTime
+  - sessionDetails : String
+  + recordCheckIn() : void
+}
+
+Ticket "1" --> "*" Attendance : tracks >
+
+' ==================== SYSTEM ====================
+class ConferenceSystem {
+  + manageRegistration(r : Registration) : void
+  + processPayment(p : Payment) : void
+  + issueTicket(t : Ticket) : void
+  + trackAttendance(a : Attendance) : void
+}
+
+ConferenceSystem --> Registration : manages >
+ConferenceSystem --> Payment : processes >
+ConferenceSystem --> Ticket : issues >
+ConferenceSystem --> Attendance : monitors >
+
+@enduml

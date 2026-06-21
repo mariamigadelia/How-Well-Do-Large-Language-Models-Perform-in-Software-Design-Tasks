@@ -1,0 +1,111 @@
+@startuml Car_Rental_System
+
+' ====================== CLASSES ======================
+
+class Car {
+  - plateNumber : String
+  - model : String
+  - dailyPrice : double
+  - available : boolean
+  --
+  + isAvailable() : boolean
+  + getDailyPrice() : double
+  + setAvailability(status : boolean) : void
+}
+
+class Gallery {
+  - cars : List<Car>
+  --
+  + addCar(car : Car) : void
+  + removeCar(plate : String) : void
+  + getAvailableCars() : List<Car>
+  + sortByPrice() : List<Car>
+}
+
+class StoreAssistant {
+  - employeeID : String
+  - name : String
+  - designation : String
+  --
+  + searchAvailableCars() : List<Car>
+  + submitRental(rental : Rental) : void
+  + updateRentalList(rental : Rental) : void
+  + rentCar(rental : Rental) : void
+  + takeBackCar(rentalCode : String) : void
+  + produceRentalReport(date : Date) : RentalReport
+  + recordCustomer(customer : Customer) : void
+}
+
+class Customer {
+  - customerID : String
+  - name : String
+  - surname : String
+  - address : String
+  - rentedCarPlate : String
+  - leasingTerms : String
+}
+
+class Rental {
+  - rentalCode : String
+  - carPlateNumber : String
+  - customerID : String
+  - startDate : Date
+  - endDate : Date
+  - terms : String
+  --
+  + getRentalCode() : String
+  + getDuration() : int
+}
+
+class RentalList {
+  - rentals : List<Rental>
+  --
+  + addRental(rental : Rental) : void
+  + removeRental(rentalCode : String) : void
+  + getRentedCars() : List<Rental>
+}
+
+class RentalReport {
+  - reportDate : Date
+  - rentedCars : List<Rental>
+  - rentalSummary : String
+  --
+  + generate() : void
+}
+
+class MainOffice {
+  - officeID : String
+  - officeName : String
+  --
+  + sendOverdueNotice(notice : OverdueNotice) : void
+}
+
+class OverdueNotice {
+  - noticeID : String
+  - rentalCode : String
+  - customerID : String
+  - issueDate : Date
+  - message : String
+}
+
+' ====================== RELATIONSHIPS ======================
+
+Gallery "1" o-- "*" Car : contains >
+
+StoreAssistant "1" --> "1" Gallery : searches >
+StoreAssistant "1" --> "1" RentalList : updates >
+StoreAssistant "1" ..> RentalReport : produces >
+StoreAssistant "1" --> "*" Customer : records >
+
+RentalList "1" o-- "*" Rental : manages >
+
+Rental "*" --> "1" Car : references >
+Rental "*" --> "1" Customer : made by >
+
+RentalReport "1" o-- "*" Rental : summarizes >
+
+MainOffice "1" ..> "*" OverdueNotice : sends >
+OverdueNotice "*" --> "1" Rental : refers to >
+OverdueNotice "*" --> "1" Customer : addressed to >
+
+@enduml

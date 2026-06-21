@@ -1,0 +1,111 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+class ExportCompany {
+  -companyId: String
+  -name: String
+  -address: String
+  -contactInformation: String
+  -certifications: String
+  -exportLicenses: String
+}
+
+class Commodity {
+  -commodityId: String
+  -name: String
+  -type: String
+  -description: String
+  -status: CommodityStatus
+  -qualityStandards: String
+  -shelfLife: int
+}
+
+class ExportOrder {
+  -orderId: String
+  -orderDate: Date
+  -quantity: int
+  -destination: String
+  -status: OrderStatus
+}
+
+class Shipment {
+  -shipmentNumber: String
+  -shipmentDate: Date
+  -route: String
+  -status: ShipmentStatus
+  +updateStatus(status: ShipmentStatus)
+  +trackRoute()
+}
+
+class ExportDocument {
+  -documentId: String
+  -documentDate: Date
+  -documentType: DocumentType
+  -shipmentDetails: String
+  +generate()
+}
+
+enum CommodityStatus {
+  AVAILABLE
+  RESERVED
+  EXPORTED
+  EXPIRED
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PROCESSING
+  SHIPPED
+  COMPLETED
+  CANCELLED
+}
+
+enum ShipmentStatus {
+  PREPARING
+  IN_TRANSIT
+  DELIVERED
+  DELAYED
+  CANCELLED
+}
+
+enum DocumentType {
+  COMMERCIAL_INVOICE
+  PACKING_LIST
+  CERTIFICATE_OF_ORIGIN
+  PHYTOSANITARY_CERTIFICATE
+  EXPORT_LICENSE
+}
+
+ExportCompany "1" -- "0..*" Commodity : handles
+ExportCompany "1" -- "0..*" ExportOrder : places/manages
+ExportCompany "1" -- "0..*" Shipment : tracks
+ExportCompany "1" -- "0..*" ExportDocument : stores
+
+ExportOrder "1" --> "1" ExportCompany : belongs to
+ExportOrder "1" --> "1..*" Commodity : exports
+
+Shipment "1" --> "1" ExportOrder : linked to
+Shipment "1" --> "1" Commodity : transports
+Shipment "1" --> "1" ExportCompany : for company
+
+ExportDocument "1" --> "1" ExportCompany : generated for
+ExportDocument "1" --> "1" ExportOrder : based on
+ExportDocument "1" --> "1" Shipment : based on
+
+Commodity --> CommodityStatus
+ExportOrder --> OrderStatus
+Shipment --> ShipmentStatus
+ExportDocument --> DocumentType
+
+note right of ExportDocument
+Documents are generated from
+company, order, and shipment data.
+end note
+
+note bottom of Shipment
+Tracks shipment route,
+date, and current status.
+end note
+
+@enduml

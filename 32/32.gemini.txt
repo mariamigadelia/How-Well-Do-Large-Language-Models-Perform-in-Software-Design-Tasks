@@ -1,0 +1,148 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam monochrome true
+left to right direction
+
+title Flight Reservation System - Class Diagram
+
+' --- Airport & Route Infrastructure ---
+
+class Airport {
+    - airportCode: String
+    - name: String
+    - city: String
+}
+
+class Route {
+    - routeId: String
+    + validateFeasibility(): Boolean
+}
+
+class Span {
+    - spanId: String
+    + getOriginAirport(): Airport
+    + getDestinationAirport(): Airport
+}
+
+class BasicAirline {
+    - airlineCode: String
+    - distance: Double
+}
+
+' --- Flight & Aircraft Scheduling ---
+
+class Flight {
+    - flightNumber: String
+    - date: Date
+    - scheduledDeparture: Time
+    - actualDeparture: Time
+    - status: String
+    + checkSchedule(): String
+}
+
+class Plane {
+    - tailNumber: String
+    - model: String
+}
+
+class Seat {
+    - seatNumber: String
+    - classType: String
+    - isReserved: Boolean
+}
+
+class ConnectingFlight {
+    - layoverDuration: Integer
+    + isValidConnection(): Boolean
+}
+
+' --- Customer & Reservation Domain ---
+
+class Customer {
+    - customerId: String
+    - title: String
+    - name: String
+    - address: String
+}
+
+class Reservation {
+    - reservationId: String
+    - bookingDate: Date
+    - status: String
+    + confirmBooking(): Void
+}
+
+class Ticket {
+    - ticketNumber: String
+    - seatAssignment: String
+    - flightDetailsSummary: String
+    + printTicket(): String
+}
+
+' --- Airport Amenities & Boards ---
+
+class InformationBoard {
+    - boardId: String
+    - location: String
+    + displayShortInfo(flight: Flight): String
+}
+
+class CityAmenityInfo {
+    - cityName: String
+    - parkingFacilities: List<String>
+    - hotelsList: List<String>
+    - restaurantsList: List<String>
+    + getAmenitySummary(): String
+}
+
+' --- Relationships & Multiplicities ---
+
+' Route Structural Composition
+Route "1" *-- "1..*" Span : includes >
+Span <|-- BasicAirline
+Route "1" *-- "1..*" BasicAirline : composed of connected >
+Span "*" -- "1" Airport : originates at (origin) >
+Span "*" -- "1" Airport : terminates at (destination) >
+
+' Flight & Schedule Realization
+Flight "1" -- "1" Route : follows >
+Flight "1" *-- "1..*" Span : executes >
+Flight "*" -- "1" Plane : assigned to <
+Plane "1" *-- "1..*" Seat : contains >
+
+' Connecting Flight Self-Association
+Flight "1" -- "*" ConnectingFlight : has >
+ConnectingFlight "*" -- "1" Flight : links to subsequent >
+
+' Customer & Booking Operations
+Customer "1" -- "*" Reservation : makes >
+Reservation "1" *-- "1..*" Ticket : issues >
+Ticket "*" -- "1" Seat : allocates >
+Ticket "*" -- "1" Flight : booked for >
+
+' Airport Displays and Local Conveniences
+InformationBoard "*" -- "*" Flight : displays status of >
+Airport "1" -- "1" CityAmenityInfo : provides local context for >
+
+note top of Route
+  <b>Route Feasibility:</b>
+  A route maps connected basic airlines 
+  connecting all intermediate airports 
+  from origin to final destination.
+end note
+
+note bottom of Ticket
+  <b>Plane Change Rule:</b>
+  Stops are omitted from the ticket 
+  unless the flight number changes, 
+  signaling a structural plane switch.
+end note
+
+note right of CityAmenityInfo
+  <b>Contextual Amenity Rules:</b>
+  - For Origins: lists parking details.
+  - For Destinations: lists nearby hotels.
+  - For Intermediate Stops: lists hotels and restaurants.
+end note
+
+@endum

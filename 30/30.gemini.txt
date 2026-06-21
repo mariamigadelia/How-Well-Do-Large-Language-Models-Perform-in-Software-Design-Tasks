@@ -1,0 +1,124 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam monochrome true
+left to right direction
+
+title University WatCard System - Class Diagram
+
+' --- Core Profile & Card Entities ---
+
+class StudentProfile {
+    - studentNumber: String
+    - name: String
+    - email: String
+    - telephoneNumber: String
+    - major: String
+    - cardValidityStatus: Boolean
+    + isCardActive(): Boolean
+}
+
+class WatCard {
+    - cardId: String
+    - rfidChipId: String
+    + swipeOrTap(): Void
+}
+
+' --- Access Control Subsystem ---
+
+class SecureArea {
+    - areaId: String
+    - areaName: String
+    - securityLevelRequired: Integer
+    + verifyAccess(card: WatCard): Boolean
+}
+
+' --- Financial & Debit Subsystem ---
+
+class DebitAccount {
+    - accountId: String
+    - balance: Double
+    + credit(amount: Double): Void
+    + debit(amount: Double): Boolean
+    + getBalance(): Double
+}
+
+abstract class Transaction {
+    - transactionId: String
+    - timestamp: DateTime
+    - amount: Double
+    + {abstract} execute(account: DebitAccount): Boolean
+}
+
+class OnlineDeposit extends Transaction {
+    - paymentGatewayRef: String
+    + execute(account: DebitAccount): Boolean
+}
+
+abstract class UniversityFeeWithdrawal extends Transaction {
+    - merchantLocationId: String
+}
+
+class ParkingFee extends UniversityFeeWithdrawal {
+    - dispenserId: String
+}
+
+class LibraryFee extends UniversityFeeWithdrawal {
+    - fineReason: String
+}
+
+class EquipmentRentalFee extends UniversityFeeWithdrawal {
+    - pacItemId: String
+}
+
+class TranscriptFee extends UniversityFeeWithdrawal {
+    - documentRequestId: String
+}
+
+' --- Audit & Logging Engine ---
+
+enum UsageType {
+    SECURE_ACCESS_GRANT
+    SECURE_ACCESS_DENIED
+    ONLINE_DEPOSIT
+    FEE_PAYMENT
+}
+
+class UsageRecord {
+    - logId: String
+    - timestamp: DateTime
+    - activityType: UsageType
+    - detailsSummary: String
+    + logActivity(): Void
+}
+
+' --- Relationships & Multiplicities ---
+
+' Card ownership structure
+StudentProfile "1" *-- "1" WatCard : holds >
+StudentProfile "1" *-- "1" DebitAccount : owns >
+
+' Access Domain Operations
+SecureArea "1" ..> "1" WatCard : evaluates >
+
+' Debit Operations
+DebitAccount "1" *-- "*" Transaction : logs history on >
+
+' Global Logging system tracks everything WatCard touches
+WatCard "1" -- "*" UsageRecord : tracks usage of >
+SecureArea "1" ..> "*" UsageRecord : reports access events to >
+Transaction "1" ..> "1" UsageRecord : registers financial activity to >
+
+note top of StudentProfile
+  <b>Card Validity Flag:</b>
+  Before executing any access checks or debit 
+  transactions, the system checks cardValidityStatus 
+  to prevent unauthorized interactions.
+end note
+
+note bottom of Transaction
+  <b>Initial Release Scope:</b>
+  Transactions only permit Online Deposits 
+  and explicit University Fee structures.
+end note
+
+@endum

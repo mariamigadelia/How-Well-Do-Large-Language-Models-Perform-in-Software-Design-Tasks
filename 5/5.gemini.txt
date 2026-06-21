@@ -1,0 +1,125 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam monochrome true
+left to right direction
+
+title Address Book Application - Class Diagram
+
+' --- Model Layer ---
+
+class AddressBook {
+    - entries: List<AddressBookEntry>
+    - changedSinceLastSave: Boolean
+    - associatedFile: File
+    + addEntry(entry: AddressBookEntry): Void
+    + deleteEntry(entry: AddressBookEntry): Void
+    + getEntries(): List<AddressBookEntry>
+    + isChanged(): Boolean
+    + setChanged(changed: Boolean): Void
+    + getAssociatedFile(): File
+    + setAssociatedFile(file: File): Void
+}
+
+class AddressBookEntry {
+    - firstName: String
+    - lastName: String
+    - address: String
+    - city: String
+    - state: String
+    - zip: String
+    - phoneNumber: String
+    + getFirstName(): String
+    + getLastName(): String
+    + getZip(): String
+    + editDetails(address: String, city: String, state: String, zip: String, phone: String): Void
+    + generateMailingLabel(): String
+}
+
+' --- Strategy Pattern for Sorting ---
+
+interface SortStrategy {
+    + sort(entries: List<AddressBookEntry>): List<AddressBookEntry>
+}
+
+class SortByName {
+    + sort(entries: List<AddressBookEntry>): List<AddressBookEntry>
+}
+
+class SortByZip {
+    + sort(entries: List<AddressBookEntry>): List<AddressBookEntry>
+}
+
+' --- Controller Layer ---
+
+class AddressBookController {
+    - currentAddressBook: AddressBook
+    - fileManager: FileManager
+    + createNewAddressBook(): Void
+    + openAddressBook(file: File): Void
+    + saveAddressBook(): Void
+    + saveAddressBookAs(file: File): Void
+    + closeAddressBook(): Boolean
+    + quitApplication(): Void
+    + sortCurrentBook(strategy: SortStrategy): Void
+    + printMailingLabels(): List<String>
+}
+
+class FileManager {
+    + loadFromFile(file: File): AddressBook
+    + saveToFile(book: AddressBook, file: File): Void
+}
+
+' --- View / UI Layer ---
+
+class MainWindow {
+    - windowTitle: String
+    + displayAddressBook(book: AddressBook): Void
+    + updateTitle(title: String): Void
+    + promptSaveConfirmation(): DialogResult
+    + promptForFile(): File
+}
+
+class FileMenu {
+    + onNewSelected(): Void
+    + onOpenSelected(): Void
+    + onCloseSelected(): Void
+    + onSaveSelected(): Void
+    + onSaveAsSelected(): Void
+    + onQuitSelected(): Void
+}
+
+' --- Relationships ---
+
+' Model Aggregation
+AddressBook "1" *-- "*" AddressBookEntry : contains >
+
+' Controller Orchestration
+AddressBookController "1" o-- "0..1" AddressBook : manages >
+AddressBookController "1" -- "1" FileManager : utilizes >
+AddressBookController "1" -- "1" MainWindow : updates >
+
+' UI composition
+MainWindow "1" *-- "1" FileMenu : contains >
+FileMenu ..> AddressBookController : triggers actions on >
+
+' Strategy implementation
+AddressBookController ..> SortStrategy : uses >
+SortStrategy <|.. SortByName
+SortStrategy <|.. SortByZip
+
+note top of AddressBookController
+  <b>Single vs. Multi-Window Strategy:</b>
+  Currently holds a 0..1 reference to 'currentAddressBook' 
+  for a single-window system. To extend to multi-window, 
+  the controller can manage a Collection of windows/books 
+  without breaking the underlying model logic.
+end note
+
+note right of AddressBookEntry
+  <b>Constraint:</b>
+  editDetails() accepts all parameters 
+  EXCEPT firstName and lastName, enforcing 
+  the immutable name requirement.
+end note
+
+@endum

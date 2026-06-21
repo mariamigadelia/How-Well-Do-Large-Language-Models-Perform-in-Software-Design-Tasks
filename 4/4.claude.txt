@@ -1,0 +1,155 @@
+@startuml ATM_Banking_Network
+
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+
+title Computerized Banking Network - Class Diagram
+
+' ================= CLASSES =================
+
+class Consortium {
+  - name : String
+  - sharedSystemCost : double
+  + apportionCost() : void
+  + clearTransaction(t : Transaction) : boolean
+}
+
+class CentralComputer {
+  - location : String
+  + routeTransaction(t : RemoteTransaction) : void
+  + verifyCard(card : CashCard) : boolean
+}
+
+class Bank {
+  - bankCode : String
+  - name : String
+  + processTransaction(t : Transaction) : boolean
+  + countCashCardCustomers() : int
+}
+
+class BankComputer {
+  - address : String
+  + openAccount(c : Customer) : Account
+  + updateAccount(a : Account, t : Transaction) : void
+  + lockAccount(a : Account) : void
+  + unlockAccount(a : Account) : void
+}
+
+class Account {
+  - accountNumber : String
+  - balance : double
+  - creditLimit : double
+  - type : String
+  - lockOwner : Transaction
+  + post(amount : double) : void
+  + getBalance() : double
+  + acquireLock(t : Transaction) : boolean
+  + releaseLock(t : Transaction) : void
+}
+
+class Customer {
+  - name : String
+  - address : String
+  - customerId : String
+}
+
+class CashCard {
+  - cardNumber : String
+  - serialNumber : String
+  - expiryDate : Date
+  + getBank() : Bank
+}
+
+class CashierStation {
+  - stationId : String
+  + printReceipt() : Receipt
+  + submitTransaction(t : CashierTransaction) : void
+}
+
+class Cashier {
+  - employeeId : String
+  - name : String
+  + enterAccountData() : void
+  + enterTransactionData() : void
+}
+
+class ATM {
+  - machineId : String
+  - location : String
+  - cashOnHand : double
+  + acceptCard(card : CashCard) : boolean
+  + interactWithUser() : void
+  + dispenseCash(amount : double) : void
+  + printReceipt() : Receipt
+  + ejectCard() : void
+}
+
+abstract class Transaction {
+  - transactionId : String
+  - dateTime : DateTime
+  - amount : double
+  - type : TransactionKind
+  + execute() : boolean
+  + log() : void
+}
+
+class CashierTransaction extends Transaction {
+  + enteredBy() : Cashier
+}
+
+class RemoteTransaction extends Transaction {
+  + getStartingATM() : ATM
+}
+
+class Receipt {
+  - receiptNumber : String
+  - dateTime : DateTime
+  - balanceAfter : double
+  + print() : void
+}
+
+enum TransactionKind {
+  WITHDRAWAL
+  DEPOSIT
+  TRANSFER
+  BALANCE_INQUIRY
+}
+
+' ================= RELATIONSHIPS =================
+
+Consortium "1" o-- "1..*" Bank : consists of >
+Consortium "1" *-- "1" CentralComputer : operates >
+
+Bank "1" *-- "1" BankComputer : owns >
+Bank "1" o-- "0..*" CashierStation : owns >
+Bank "1" *-- "0..*" Account : maintains >
+Bank "1" o-- "0..*" Customer : has >
+Bank "1" -- "0..*" CashCard : issues >
+
+CentralComputer "1" o-- "0..*" ATM : communicates with >
+CentralComputer "1" --> "1..*" BankComputer : clears with >
+
+BankComputer "1" o-- "0..*" CashierStation : communicates with >
+BankComputer "1" *-- "0..*" Account : manages >
+
+Customer "0..*" -- "0..*" Account : holds >
+Customer "1" -- "0..*" CashCard : owns >
+
+CashCard "0..*" --> "1" Bank : authorizes access to >
+
+CashierStation "1" --> "0..*" Cashier : used by >
+CashierStation "1" ..> "0..*" CashierTransaction : enters >
+
+ATM "1" ..> "0..*" RemoteTransaction : initiates >
+ATM "1" ..> "0..*" Receipt : prints >
+ATM "1" ..> CashCard : reads >
+
+Account "1" -- "0..*" Transaction : recorded against >
+Account "0..1" --> "0..1" Transaction : locked by >
+
+Cashier "1" ..> "0..*" CashierTransaction : performs >
+
+Transaction "1" ..> "0..1" Receipt : produces >
+Transaction --> TransactionKind
+
+@enduml

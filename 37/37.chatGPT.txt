@@ -1,0 +1,70 @@
+@startuml
+title Personal Finance Management System - Class Diagram
+
+class PersonalFinanceManagementSystem {
+  + trackExpenses()
+  + checkBudgetAdherence()
+  + manageInvestmentPortfolio()
+  + trackGoals()
+}
+
+class Account {
+  - accountId: int
+  - accountName: String
+  - accountType: String
+  - balance: double
+}
+
+class Income {
+  - incomeId: int
+  - source: String
+  - amount: double
+  - date: Date
+}
+
+class Expense {
+  - expenseCode: int
+  - category: String
+  - amount: double
+  - date: Date
+}
+
+class Budget {
+  - budgetId: int
+  - category: String
+  - limit: double
+  - actualAmountSpent: double
+  + trackSpending()
+}
+
+class Investment {
+  - investmentId: int
+  - assetAllocations: String
+  - investmentValue: double
+  - historicalPerformance: String
+  + updatePortfolio()
+}
+
+class FinancialGoal {
+  - goalId: int
+  - description: String
+  - targetAmount: double
+  - currentProgress: double
+  + updateProgress()
+}
+
+PersonalFinanceManagementSystem "1" -- "many" Account : manages
+PersonalFinanceManagementSystem "1" -- "many" Income : records
+PersonalFinanceManagementSystem "1" -- "many" Expense : tracks
+PersonalFinanceManagementSystem "1" -- "many" Budget : creates
+PersonalFinanceManagementSystem "1" -- "many" Investment : manages
+PersonalFinanceManagementSystem "1" -- "many" FinancialGoal : tracks
+
+Account "1" -- "many" Income : receives
+Account "1" -- "many" Expense : pays
+
+Budget "1" -- "many" Expense : limits
+Investment "many" -- "1" Account : uses
+FinancialGoal "1" -- "many" Account : funded by
+
+@enduml

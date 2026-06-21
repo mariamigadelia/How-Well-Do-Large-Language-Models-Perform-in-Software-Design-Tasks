@@ -1,0 +1,54 @@
+@startuml
+title Livestock Farm Information Management System Class Diagram
+
+' ==================== LIVESTOCK ====================
+class Livestock {
+  - animalID : String
+  - birthdate : Date
+  - breed : String
+  - recordNumber : String
+  + assignToPen(p : Pen) : void
+}
+
+class Pen {
+  - penID : String
+  - location : String
+  - capacity : int
+}
+
+Livestock "1" --> "1" Pen : housedIn >
+
+' ==================== HEALTH TRACKING ====================
+class HealthRecord {
+  - trackingCode : String
+  - veterinaryVisit : Date
+  - symptoms : String
+  - treatmentPlan : String
+  + updateHealthData() : void
+}
+
+HealthRecord "1" --> "1" Livestock : references >
+
+' ==================== VACCINATION ====================
+class VaccinationSchedule {
+  - scheduleID : String
+  - scheduleDetails : String
+  - vaccinationDate : Date
+  + setReminder() : void
+  + recordVaccination() : void
+}
+
+VaccinationSchedule "1" --> "1" Livestock : references >
+
+' ==================== SYSTEM ====================
+class LivestockManagementSystem {
+  + recordLivestock(l : Livestock) : void
+  + trackHealth(hr : HealthRecord) : void
+  + manageVaccination(vs : VaccinationSchedule) : void
+}
+
+LivestockManagementSystem --> Livestock : manages >
+LivestockManagementSystem --> HealthRecord : tracks >
+LivestockManagementSystem --> VaccinationSchedule : schedules >
+
+@enduml

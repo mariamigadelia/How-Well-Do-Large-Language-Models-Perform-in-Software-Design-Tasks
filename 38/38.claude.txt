@@ -1,0 +1,86 @@
+@startuml Inventory Optimization System
+
+' ===== Classes =====
+
+class InventoryItem {
+  - itemID : String
+  - description : String
+  - currentStockLevel : int
+  - leadTime : int
+  --
+  + checkStockLevel() : int
+  + replenishStock(quantity : int) : void
+  + updateStock(quantity : int) : void
+}
+
+class DemandForecast {
+  - forecastID : String
+  - forecastedQuantity : int
+  - timeframe : String
+  --
+  + predictDemand() : int
+  + generateForecast() : void
+}
+
+class Order {
+  - orderNumber : String
+  - orderDate : Date
+  - orderQuantity : int
+  --
+  + processOrder() : void
+  + trackOrder() : String
+  + calculateQuantity() : int
+}
+
+class Supplier {
+  - supplierID : String
+  - telephoneNumber : String
+  - contactInformation : String
+  - productCatalogue : List<String>
+  - leadTimeCommitment : int
+  --
+  + evaluatePerformance() : double
+  + getCatalogue() : List<String>
+}
+
+class Shipment {
+  - shipmentNumber : String
+  - timestamp : DateTime
+  - trackingInformation : String
+  --
+  + trackShipment() : String
+  + recordMovement() : void
+}
+
+' ===== Controller / System Class =====
+
+class InventoryOptimizationSystem {
+  --
+  + automateDemandForecasting() : void
+  + replenishInventory() : void
+  + trackOrders() : void
+  + evaluateSupplierPerformance() : void
+}
+
+' ===== Relationships =====
+
+' A supplier supplies many items; each item has one designated supplier
+Supplier "1" -- "0..*" InventoryItem : supplies >
+
+' Each item has a demand forecast
+InventoryItem "1" -- "1" DemandForecast : has >
+
+' Orders are processed based on demand forecasts
+DemandForecast "1" -- "0..*" Order : drives >
+
+' Shipments are made based on order references
+Order "1" -- "0..*" Shipment : results in >
+
+' System orchestrates the core entities
+InventoryOptimizationSystem ..> InventoryItem : manages
+InventoryOptimizationSystem ..> DemandForecast : forecasts
+InventoryOptimizationSystem ..> Order : processes
+InventoryOptimizationSystem ..> Supplier : evaluates
+InventoryOptimizationSystem ..> Shipment : tracks
+
+@enduml

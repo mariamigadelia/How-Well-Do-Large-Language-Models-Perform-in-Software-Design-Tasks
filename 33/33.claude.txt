@@ -1,0 +1,96 @@
+@startuml Conference Registration System
+
+class Attendee {
+  - attendeeId: int
+  - name: String
+  - email: String
+  - address: String
+  --
+  + register(): void
+  + updateProfile(): void
+  + viewTickets(): List<Ticket>
+}
+
+class Registration {
+  - registrationNumber: String
+  - date: Date
+  - name: String
+  - email: String
+  - address: String
+  - eventOptions: List<String>
+  --
+  + createRegistration(): void
+  + selectEventOptions(): void
+  + cancelRegistration(): void
+  + getRegistrationDetails(): String
+}
+
+class Payment {
+  - paymentId: String
+  - date: Date
+  - purpose: String
+  - amount: double
+  --
+  + processPayment(): boolean
+  + refundPayment(): boolean
+  + generateReceipt(): String
+  + getPaymentStatus(): String
+}
+
+class Ticket {
+  - ticketNumber: String
+  - eventDetails: String
+  - issueDate: Date
+  --
+  + issueTicket(): void
+  + validateTicket(): boolean
+  + getTicketDetails(): String
+}
+
+class Attendance {
+  - attendanceId: String
+  - checkInTimestamp: DateTime
+  - checkOutTimestamp: DateTime
+  - sessionDetails: String
+  --
+  + checkIn(): void
+  + checkOut(): void
+  + recordAttendance(): void
+  + getAttendanceReport(): String
+}
+
+class Session {
+  - sessionId: String
+  - sessionName: String
+  - startTime: DateTime
+  - endTime: DateTime
+  - location: String
+  --
+  + scheduleSession(): void
+  + getSessionInfo(): String
+}
+
+class RegistrationSystem {
+  - systemId: String
+  - conferenceName: String
+  --
+  + manageRegistration(): void
+  + processPayment(): void
+  + issueTicket(): void
+  + trackAttendance(): void
+}
+
+' Relationships
+Attendee "1" -- "1..*" Registration : makes >
+Registration "1" -- "1..*" Payment : requires >
+Registration "1" -- "1" Ticket : generates >
+Attendee "1" -- "1" Ticket : receives >
+Attendee "1" -- "0..*" Attendance : has >
+Attendance "0..*" -- "1" Session : tracks >
+
+RegistrationSystem "1" -- "0..*" Registration : manages >
+RegistrationSystem "1" -- "0..*" Payment : processes >
+RegistrationSystem "1" -- "0..*" Ticket : issues >
+RegistrationSystem "1" -- "0..*" Attendance : monitors >
+
+@enduml

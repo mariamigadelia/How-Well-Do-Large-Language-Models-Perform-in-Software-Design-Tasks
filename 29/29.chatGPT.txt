@@ -1,0 +1,86 @@
+@startuml
+title Organic Farming Certification Management System - Class Diagram
+
+class OrganicCertificationSystem {
+  + assessFarmEligibility()
+  + conductInspection()
+  + issueCertificate()
+  + monitorCompliance()
+  + manageRenewalProcess()
+  + updateCertificationStatus()
+}
+
+class Farm {
+  - farmId: int
+  - name: String
+  - address: String
+  - gpsCoordinates: String
+}
+
+class Certification {
+  - certificationNumber: int
+  - date: Date
+  - description: String
+  - validity: String
+  + assessEligibility()
+  + conductInspection()
+  + issueCertificate()
+}
+
+class Inspection {
+  - inspectionId: int
+  - inspectionDate: Date
+  - inspectorName: String
+  - result: String
+  + performInspection()
+}
+
+class Monitoring {
+  - monitoringId: int
+  - activityDate: Date
+  - description: String
+  - outcome: String
+  + trackFarmingActivities()
+  + verifyCompliance()
+  + storeResults()
+}
+
+class OrganicStandard {
+  - standardId: int
+  - standardName: String
+  - requirements: String
+}
+
+class CertificationRecord {
+  - recordNumber: int
+  - renewalDate: Date
+  - status: String
+  + manageRenewal()
+  + updateStatus()
+}
+
+class Certificate {
+  - certificateId: int
+  - issueDate: Date
+  - expiryDate: Date
+  - certificateDetails: String
+}
+
+OrganicCertificationSystem "1" -- "many" Farm : manages
+OrganicCertificationSystem "1" -- "many" Certification : processes
+OrganicCertificationSystem "1" -- "many" Monitoring : performs
+OrganicCertificationSystem "1" -- "many" CertificationRecord : maintains
+
+Farm "1" -- "many" Certification : applies for
+Certification "1" -- "many" Inspection : includes
+Certification "1" -- "1" Certificate : issues
+Certification "1" -- "1" CertificationRecord : recorded in
+
+Farm "1" -- "many" Monitoring : monitored by
+Monitoring "many" -- "1" OrganicStandard : verifies against
+Certification "many" -- "1" OrganicStandard : based on
+
+CertificationRecord "1" -- "1" Certification : tracks
+CertificationRecord "1" -- "0..1" Certificate : updates status of
+
+@enduml

@@ -1,0 +1,93 @@
+@startuml
+title Flight Reservation System Class Diagram
+
+' ==================== CUSTOMER ====================
+class Customer {
+  - customerID : String
+  - title : String
+  - name : String
+  - address : String
+  + makeReservation(r : Reservation) : void
+}
+
+' ==================== FLIGHT ====================
+class Flight {
+  - flightNumber : String
+  - flightDate : Date
+  + checkConnections() : void
+}
+
+class Plane {
+  - planeID : String
+  - model : String
+  + assignSeats() : void
+}
+
+class Seat {
+  - seatNumber : String
+  - isAvailable : boolean
+}
+
+Flight "1" --> "1" Plane : assigned >
+Plane "1" o-- "*" Seat : contains >
+
+' ==================== ROUTE & SPAN ====================
+class Route {
+  - routeID : String
+  + defineRoute() : void
+}
+
+class Span {
+  - spanID : String
+  - originAirport : String
+  - destinationAirport : String
+}
+
+Route "1" o-- "*" Span : includes >
+Flight "1" --> "1" Route : follows >
+Span "1" --> "1" Flight : partOf >
+
+' ==================== AIRPORT ====================
+class Airport {
+  - airportCode : String
+  - name : String
+  - city : String
+  + showFacilities() : void
+}
+
+class InformationBoard {
+  - boardID : String
+  - shortInfo : String
+  + displayFlightInfo(f : Flight) : void
+}
+
+Airport "1" --> "1" InformationBoard : has >
+
+' ==================== RESERVATION & TICKET ====================
+class Reservation {
+  - reservationID : String
+  - seatNumber : String
+  + confirmReservation() : void
+}
+
+class Ticket {
+  - ticketNumber : String
+  - flightDetails : String
+}
+
+Customer "1" --> "*" Reservation : makes >
+Reservation "1" --> "1" Flight : for >
+Reservation "1" --> "1" Seat : reserves >
+Reservation "1" --> "1" Ticket : issues >
+
+' ==================== AIRLINE ====================
+class Airline {
+  - airlineID : String
+  - originAirport : String
+  - destinationAirport : String
+  + operateDirectFlight() : void
+}
+
+Airline "1" --> "1" Span : corresponds >
+
+@enduml

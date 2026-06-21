@@ -1,0 +1,76 @@
+@startuml
+title Livestock Farm Information Management System - Class Diagram
+
+class LivestockFarmSystem {
+  + keepLivestockRecords()
+  + trackAnimalHealth()
+  + scheduleVaccinations()
+  + sendVaccinationReminder()
+}
+
+class Animal {
+  - animalId: int
+  - birthdate: Date
+  - breed: String
+  - recordNumber: int
+}
+
+class Pen {
+  - penId: int
+  - penName: String
+  - location: String
+  - capacity: int
+}
+
+class HealthTracking {
+  - trackingCode: int
+  - healthData: String
+  - veterinaryVisits: String
+  - symptoms: String
+  - treatmentPlans: String
+  + recordVeterinaryVisit()
+  + updateTreatmentPlan()
+}
+
+class VaccinationSchedule {
+  - scheduleId: int
+  - scheduleDetails: String
+  - vaccinationDate: Date
+  - vaccinationHistory: String
+  + setReminder()
+  + recordVaccination()
+  + updateVaccinationHistory()
+}
+
+class VaccinationReminder {
+  - reminderId: int
+  - reminderDate: Date
+  - reminderMessage: String
+  + sendReminder()
+}
+
+class Veterinarian {
+  - veterinarianId: int
+  - name: String
+  - contactInformation: String
+  + examineAnimal()
+  + prescribeTreatment()
+}
+
+LivestockFarmSystem "1" -- "many" Animal : manages records
+LivestockFarmSystem "1" -- "many" HealthTracking : tracks
+LivestockFarmSystem "1" -- "many" VaccinationSchedule : manages
+
+Pen "1" -- "many" Animal : houses
+Animal "many" -- "1" Pen : references
+
+Animal "1" -- "many" HealthTracking : has
+Animal "1" -- "many" VaccinationSchedule : has
+
+HealthTracking "many" -- "1" Veterinarian : recorded by
+VaccinationSchedule "1" -- "many" VaccinationReminder : creates
+
+VaccinationReminder "many" -- "1" Animal : for
+VaccinationReminder "many" -- "1" VaccinationSchedule : based on
+
+@enduml

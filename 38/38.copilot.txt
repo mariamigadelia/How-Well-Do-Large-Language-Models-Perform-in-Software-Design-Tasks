@@ -1,0 +1,71 @@
+@startuml
+title Inventory Optimization System Class Diagram
+
+' ==================== ITEM ====================
+class Item {
+  - itemID : String
+  - description : String
+  - currentStockLevel : int
+  - leadTime : int
+  + updateStockLevel(qty : int) : void
+}
+
+' ==================== SUPPLIER ====================
+class Supplier {
+  - supplierID : String
+  - telephone : String
+  - contactInfo : String
+  - productCatalogue : String
+  - leadTimeCommitments : String
+  + evaluatePerformance() : void
+}
+
+Item "1" --> "1" Supplier : suppliedBy >
+
+' ==================== DEMAND FORECAST ====================
+class DemandForecast {
+  - forecastID : String
+  - forecastedQuantity : int
+  - timeframe : String
+  + predictDemand() : void
+}
+
+Item "1" --> "1" DemandForecast : has >
+
+' ==================== ORDER ====================
+class Order {
+  - orderNumber : String
+  - orderDate : Date
+  - orderQuantity : int
+  + processOrder() : void
+}
+
+Order "1" --> "1" DemandForecast : basedOn >
+Order "1" --> "1" Supplier : placedWith >
+
+' ==================== SHIPMENT ====================
+class Shipment {
+  - shipmentNumber : String
+  - timestamp : DateTime
+  - trackingInfo : String
+  + trackShipment() : void
+}
+
+Shipment "1" --> "1" Order : references >
+
+' ==================== SYSTEM FUNCTIONALITIES ====================
+class InventorySystem {
+  + recordItem(i : Item) : void
+  + forecastDemand(i : Item) : DemandForecast
+  + replenishInventory(o : Order) : void
+  + trackOrder(o : Order) : void
+  + evaluateSupplier(s : Supplier) : void
+}
+
+InventorySystem --> Item : manages >
+InventorySystem --> DemandForecast : forecasts >
+InventorySystem --> Order : processes >
+InventorySystem --> Supplier : interacts >
+InventorySystem --> Shipment : tracks >
+
+@enduml

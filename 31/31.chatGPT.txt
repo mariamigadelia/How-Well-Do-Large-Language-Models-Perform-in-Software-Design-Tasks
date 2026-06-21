@@ -1,0 +1,108 @@
+@startuml
+title Bank Communication Preference System - Class Diagram
+
+class BankingSystem {
+  + showAccountsMenu()
+  + showSetPreferences()
+  + validateContactInformation()
+  + saveCommunicationPreference()
+  + sendCustomerInformation()
+}
+
+class Customer {
+  - customerId: int
+  - name: String
+  - surname: String
+  - emailAddress: String
+  - phoneNumber: String
+  - address: String
+  + login()
+  + selectPreference()
+}
+
+class Account {
+  - accountId: int
+  - accountNumber: String
+  - accountType: String
+  + openAccountsMenu()
+}
+
+class CommunicationPreference {
+  - preferenceId: int
+  - preferredChannel: String
+  - emailEnabled: boolean
+  - smsEnabled: boolean
+  - selectedByDefault: String
+  - appliedToAllFlows: boolean
+  + setEmailPreference()
+  + setSMSPreference()
+  + disableEmailOption()
+}
+
+class SetPreferencesScreen {
+  - screenId: int
+  - informationMessage: String
+  - emailOptionStatus: String
+  - smsOptionStatus: String
+  - continueButtonEnabled: boolean
+  + displayOptions()
+  + showInformationMessage()
+  + enableContinueButton()
+  + disableContinueButton()
+}
+
+class MobilePlatform {
+  - platformId: int
+  - platformName: String
+  + createAccount()
+  + accessAccountsMenu()
+  + setPreferences()
+}
+
+class AndroidPlatform {
+  + createAccount()
+  + accessAccountsMenu()
+  + setPreferences()
+}
+
+class IOSPlatform {
+  + createAccount()
+  + accessAccountsMenu()
+  + setPreferences()
+}
+
+class NotificationService {
+  + sendEmail()
+  + sendSMS()
+  + sendByPreferredChannel()
+}
+
+class PreferenceDatabase {
+  + storePreference()
+  + updatePreference()
+  + getPreference()
+}
+
+MobilePlatform <|-- AndroidPlatform
+MobilePlatform <|-- IOSPlatform
+
+BankingSystem "1" -- "many" Customer : manages
+BankingSystem "1" -- "many" Account : provides
+BankingSystem "1" -- "1" SetPreferencesScreen : displays
+BankingSystem "1" -- "1" NotificationService : uses
+BankingSystem "1" -- "1" PreferenceDatabase : stores preferences in
+
+Customer "1" -- "many" Account : owns
+Customer "1" -- "1" CommunicationPreference : has
+
+Account "1" -- "1" SetPreferencesScreen : contains under Accounts menu
+SetPreferencesScreen "1" -- "1" CommunicationPreference : updates
+
+CommunicationPreference "1" -- "1" PreferenceDatabase : saved in
+NotificationService ..> CommunicationPreference : checks selected channel
+NotificationService ..> Customer : sends information to
+
+AndroidPlatform ..> BankingSystem : compatible with
+IOSPlatform ..> BankingSystem : compatible with
+
+@enduml

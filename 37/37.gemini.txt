@@ -1,0 +1,88 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam monochrome true
+left to right direction
+
+title Personal Finance Management System - Class Diagram
+
+' --- Core Domain Classes ---
+
+class FinancialAccount {
+    - accountId: String
+    - accountName: String
+    - currentBalance: Double
+    + updateBalance(amount: Double): Void
+    + getAccountSummary(): String
+}
+
+class Income {
+    - incomeId: String
+    - source: String
+    - amount: Double
+    - date: Date
+    + recordIncome(): Void
+}
+
+class Expense {
+    - expenseCode: String
+    - category: String
+    - amount: Double
+    - date: Date
+    + recordExpense(): Void
+}
+
+class Budget {
+    - budgetId: String
+    - category: String
+    - spendingLimit: Double
+    - actualAmountSpent: Double
+    + trackAdherence(): Double
+    + updateSpending(amount: Double): Void
+}
+
+class InvestmentPortfolio {
+    - investmentId: String
+    - assetAllocations: Map<String, Double>
+    - currentInvestmentValue: Double
+    - historicalPerformance: List<Double>
+    + updateValue(newValue: Double): Void
+    + getPortfolioPerformance(): String
+}
+
+class FinancialGoal {
+    - goalId: String
+    - goalName: String
+    - targetAmount: Double
+    - currentProgress: Double
+    + trackProgress(): Double
+    + contributeToGoal(amount: Double): Void
+}
+
+' --- Relationships & Multiplicities ---
+
+' Cash flow tracking against specific financial accounts
+FinancialAccount "1" -- "*" Income : receives >
+FinancialAccount "1" -- "*" Expense : funds >
+
+' Budget enforcement monitoring expenses
+Budget "1" -- "*" Expense : monitors >
+
+' Goals and Portfolio are managed under the user's financial scope
+FinancialAccount "1" -- "*" InvestmentPortfolio : finances >
+FinancialAccount "1" -- "*" FinancialGoal : tracks allocations for >
+
+note top of Budget
+  <b>Budget Adherence:</b>
+  The trackAdherence() method evaluates 
+  actualAmountSpent against the spendingLimit 
+  for a targeted category.
+end note
+
+note bottom of FinancialGoal
+  <b>Goal Progress:</b>
+  Tracks specific financial milestones 
+  (e.g., retirement, vacation funds) by 
+  monitoring direct contributions.
+end note
+
+@endluml

@@ -1,0 +1,202 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam monochrome true
+left to right direction
+
+title Supermarket Inventory, Sales, and Delivery System - Class Diagram
+
+' --- Product & Inventory Management ---
+
+enum ProductType {
+    ALIMENTATION
+    PASTRY_BAKERY
+    BUTCHER
+}
+
+enum StorageLocation {
+    SHELF
+    COLD_CHAMBER
+    FREEZER
+}
+
+class Product {
+    - productId: String
+    - name: String
+    - type: ProductType
+    - expiryDate: Date
+    - price: Double
+    - storageLocation: StorageLocation
+    - ingredients: List<String>
+    + checkExpiration(): Boolean
+}
+
+class StockForm {
+    - formId: String
+    - recordedQuantity: Integer
+    - actualVerifiedQuantity: Integer
+    + updateQuantity(qty: Integer): Void
+    + verifyStock(): Boolean
+}
+
+' --- Actors / Roles ---
+
+abstract class User {
+    - id: String
+    - name: String
+}
+
+abstract class Customer {
+    - customerId: String
+    - basket: Basket
+    + browseProducts(): Void
+    + selectToBasket(product: Product, qty: Integer): Void
+    + checkProductDetails(product: Product): Void
+}
+
+class NormalCustomer {
+}
+
+class ExtraCustomer {
+}
+
+abstract class Employee {
+    - employeeId: String
+}
+
+class StoreChief {
+    + verifyInventory(forms: List<StockForm>): Void
+}
+
+class Cashier {
+    + scanProduct(productId: String, qty: Integer): Void
+    + processPayment(payment: Payment): Invoice
+}
+
+class FloorEmployee {
+    + orientCustomer(customer: Customer, product: Product): Void
+}
+
+class BakeryPastryAgent {
+    + prepareGoods(order: Order): Void
+    + packageGoods(product: Product): Void
+}
+
+class ChiefOfOrder {
+    + verifyOrder(order: Order, invoice: ProformaInvoice): Boolean
+}
+
+class Controller {
+    + checkDelivery(delivery: Delivery): Boolean
+}
+
+' --- Sales & Basket System ---
+
+class Basket {
+    - items: Map<Product, Integer>
+    + addItem(product: Product, qty: Integer): Void
+    + clear(): Void
+}
+
+abstract class Payment {
+    - amount: Double
+    + {abstract} executePayment(): Boolean
+}
+
+class CashPayment {
+    - cashTendered: Double
+}
+
+class CardPayment {
+    - cardNumber: String
+    - cardType: String
+}
+
+class Invoice {
+    - invoiceId: String
+    - issueDate: DateTime
+    - totalAmount: Double
+    + print(): Void
+}
+
+' --- Order & Delivery Pipeline ---
+
+enum OrderStatus {
+    RECEIVED
+    PREPARING
+    VERIFIED
+    COMPLETED
+}
+
+class Order {
+    - orderId: String
+    - itemQuantities: Map<Product, Integer>
+    - status: OrderStatus
+}
+
+class ProformaInvoice {
+    - proformaId: String
+    - isStamped: Boolean
+    - originalTransferred: Boolean
+    + stamp(): Void
+    + transferToDirectorOffice(): Void
+}
+
+class Delivery {
+    - deliveryId: String
+    - status: String
+    + completeDelivery(): Void
+}
+
+' --- Relationships ---
+
+' Customer Hierarchy & Basket
+Customer <|-- NormalCustomer
+Customer <|-- ExtraCustomer
+User <|-- Customer
+User <|-- Employee
+
+Customer "1" *-- "1" Basket : uses >
+Basket "0..1" o-- "*" Product : holds >
+
+' Inventory & Management
+Product "1" -- "1" StockForm : tracked by >
+StoreChief ..> StockForm : audits >
+FloorEmployee ..> Customer : assists >
+
+' Sales / Cashier Process
+Cashier ..> Basket : scans >
+Cashier ..> Payment : processes >
+Cashier ..> Invoice : generates >
+Payment <|-- CashPayment
+Payment <|-- CardPayment
+
+' Order & Delivery Process
+Employee <|-- StoreChief
+Employee <|-- Cashier
+Employee <|-- FloorEmployee
+Employee <|-- BakeryPastryAgent
+Employee <|-- ChiefOfOrder
+Employee <|-- Controller
+
+BakeryPastryAgent ..> Order : prepares >
+ChiefOfOrder ..> Order : verifies >
+ChiefOfOrder ..> ProformaInvoice : checks against >
+Controller ..> Delivery : inspects >
+
+Order "1" -- "1" ProformaInvoice : generates >
+Delivery "1" *-- "1" Order : fulfills >
+
+note top of StoreChief
+  <b>Stock Verification:</b>
+  The Store Chief compares physical 
+  counts against individual StockForms
+  to ensure inventory integrity.
+end note
+
+note bottom of ProformaInvoice
+  <b>End of Delivery Process:</b>
+  Once delivery finishes, the stamped original 
+  is transferred to the General Director's Office.
+end note
+
+@endum

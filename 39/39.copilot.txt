@@ -1,0 +1,57 @@
+@startuml
+title Donation Management System Class Diagram
+
+' ==================== DONOR ====================
+class Donor {
+  - donorID : String
+  - name : String
+  - email : String
+  - phone : String
+  + makeDonation(amount : double) : Donation
+}
+
+' ==================== DONATION ====================
+class Donation {
+  - donationNumber : String
+  - timestamp : DateTime
+  - amount : double
+  + recordDonation() : void
+}
+
+class Receipt {
+  - receiptID : String
+  - timestamp : DateTime
+  + generateReceipt(d : Donation) : void
+}
+
+Donation "1" --> "1" Receipt : issues >
+
+' ==================== CONTRIBUTION ====================
+class Contribution {
+  - contributionID : String
+  - totalAmount : double
+  + updateContribution(d : Donation) : void
+}
+
+Contribution "1" --> "1" Donor : tracks >
+
+' ==================== CAMPAIGN ====================
+class Campaign {
+  - campaignID : String
+  - name : String
+  - startDate : Date
+  - endDate : Date
+  + analysePerformance() : void
+  + analyseDemographics() : void
+  + analyseTrends() : void
+}
+
+Campaign "1" o-- "*" Donation : includes >
+Campaign "1" o-- "*" Contribution : evaluates >
+
+' ==================== RELATIONSHIPS ====================
+Donor "1" --> "*" Donation : makes >
+Donation "1" --> "1" Donor : belongsTo >
+Donor "1" --> "1" Contribution : accumulates >
+
+@enduml

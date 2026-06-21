@@ -1,0 +1,71 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam monochrome true
+left to right direction
+
+title Conference Registration & Management System - Class Diagram
+
+' --- Core Domain Classes ---
+
+class Registration {
+    - registrationNumber: String
+    - date: Date
+    - attendeeName: String
+    - attendeeEmail: String
+    - attendeeAddress: String
+    - eventOptions: List<String>
+    + createRegistration(): Boolean
+    + cancelRegistration(): Void
+}
+
+class Payment {
+    - paymentId: String
+    - date: Date
+    - purpose: String
+    - paymentAmount: Double
+    - isSettled: Boolean
+    + processPayment(): Boolean
+}
+
+class Ticket {
+    - ticketNumber: String
+    - eventDetails: String
+    - isValid: Boolean
+    + issueTicket(): Void
+    + invalidateTicket(): Void
+}
+
+class AttendanceTracker {
+    - attendanceId: String
+    - sessionDetails: String
+    - checkInTimestamp: DateTime
+    + recordCheckIn(): Void
+    + getSessionAttendanceSummary(): String
+}
+
+' --- Relationships & Multiplicities ---
+
+' Registration triggers and acts as the parent for financial settlement
+Registration "1" *-- "1..*" Payment : requires >
+
+' A Ticket is issued strictly as a result of a registration (Composition)
+Registration "1" *-- "1" Ticket : generates >
+
+' Attendance tracking monitors the registered attendee across multiple sessions
+Registration "1" -- "*" AttendanceTracker : monitors check-ins for >
+
+note top of Registration
+  <b>Event Options:</b>
+  Allows attendees to sign up for specific 
+  tracks, workshops, or VIP dinners 
+  (e.g., ["Keynote", "Workshop A"]).
+end note
+
+note bottom of Ticket
+  <b>Ticket Issuance:</b>
+  Tightly bound to Registration. 
+  A ticket cannot exist without a valid, 
+  fully processed registration.
+end note
+
+@endum

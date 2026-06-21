@@ -1,0 +1,137 @@
+@startuml
+title Flight Reservation System - Class Diagram
+
+class FlightReservationSystem {
+  + checkConnectionFeasibility()
+  + checkSchedule()
+  + makeReservation()
+  + issueTicket()
+  + showFlightInformation()
+}
+
+class Customer {
+  - customerId: int
+  - title: String
+  - name: String
+  - address: String
+  + makeReservation()
+}
+
+class Flight {
+  - flightNumber: String
+  - flightDate: Date
+  - departureTime: Time
+  - arrivalTime: Time
+  - status: String
+  + checkSchedule()
+}
+
+class Plane {
+  - planeId: int
+  - model: String
+  - capacity: int
+}
+
+class Seat {
+  - seatNumber: String
+  - seatClass: String
+  - isAvailable: boolean
+}
+
+class Reservation {
+  - reservationId: int
+  - reservationDate: Date
+  - status: String
+  + reserveSeat()
+  + cancelReservation()
+}
+
+class Ticket {
+  - ticketNumber: int
+  - issueDate: Date
+  - ticketDetails: String
+}
+
+class Airport {
+  - airportCode: String
+  - airportName: String
+  - city: String
+  - country: String
+}
+
+class Route {
+  - routeId: int
+  + validateRoute()
+}
+
+class Span {
+  - spanId: int
+  - startTime: Time
+  - terminationTime: Time
+}
+
+class Airline {
+  - airlineId: int
+  - airlineName: String
+}
+
+class BasicAirline {
+  - basicAirlineId: int
+  - distance: double
+  - duration: double
+}
+
+class ConnectingFlight {
+  - connectionId: int
+  - connectionTime: Time
+  + checkFeasibility()
+}
+
+class InformationBoard {
+  - boardId: int
+  - location: String
+  + displayFlightInfo()
+}
+
+class FacilityInformation {
+  - facilityId: int
+  - facilityType: String
+  - description: String
+  - nearbyCityDetails: String
+}
+
+FlightReservationSystem "1" -- "many" Customer : manages
+FlightReservationSystem "1" -- "many" Flight : schedules
+FlightReservationSystem "1" -- "many" Reservation : processes
+FlightReservationSystem "1" -- "many" InformationBoard : updates
+
+Customer "1" -- "many" Reservation : makes
+Reservation "1" -- "1" Ticket : has
+Reservation "1" -- "many" Seat : reserves
+Reservation "many" -- "1" Customer : belongs to
+
+Flight "1" -- "1" Plane : assigned to
+Plane "1" -- "many" Seat : contains
+
+Flight "1" -- "1" Route : follows
+Route "1" -- "many" Span : includes
+Span "1" -- "1" Airport : origin
+Span "1" -- "1" Airport : destination
+
+Flight "1" -- "many" ConnectingFlight : has
+ConnectingFlight "many" -- "1" Flight : connects to
+
+Airline <|-- BasicAirline
+BasicAirline "many" -- "1" Span : represents
+Route "1" -- "many" BasicAirline : connected by
+
+Airport "1" -- "many" InformationBoard : has
+InformationBoard "1" -- "many" Flight : displays
+
+Airport "1" -- "many" FacilityInformation : provides
+FacilityInformation ..> Airport : for origin / destination / stop
+
+Ticket "many" -- "1" Flight : for
+Ticket "many" -- "1" Customer : issued to
+
+@enduml

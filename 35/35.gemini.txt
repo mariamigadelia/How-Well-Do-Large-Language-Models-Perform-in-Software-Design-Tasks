@@ -1,0 +1,95 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam monochrome true
+left to right direction
+
+title Car Rental Gallery System - Class Diagram
+
+' --- Core Entities ---
+
+class Car {
+    - plateNumber: String
+    - model: String
+    - dailyPrice: Double
+    - isAvailable: Boolean
+    + getCarDetails(): String
+}
+
+class StoreAssistant {
+    - employeeId: String
+    - name: String
+    - designation: String
+    + searchAvailableCars(sortByPrice: Boolean): List<Car>
+    + viewRentedCars(): List<RentalRecord>
+    + submitRental(customer: Customer, car: Car, startDate: Date, endDate: Date, terms: String): Void
+    + receiveReturnedCar(rentalCode: String): Void
+    + generateRentalReport(date: Date): RentalReport
+}
+
+class Customer {
+    - customerId: String
+    - name: String
+    - surname: String
+    - address: String
+    - currentRentedCarPlate: String
+    - leasingTerms: String
+}
+
+' --- Transaction & Operational Logging ---
+
+class RentalRecord {
+    - rentalCode: String
+    - carPlateNumber: String
+    - customerId: String
+    - rentalStartDate: Date
+    - rentalEndDate: Date
+    - terms: String
+    - isReturned: Boolean
+    + markAsReturned(): Void
+}
+
+class RentalReport {
+    - reportDate: Date
+    - listOfRentedCars: List<RentalRecord>
+    - rentalSummary: String
+    + printReport(): Void
+}
+
+class MainOffice {
+    - officeId: String
+    + scanForOverdueRentals(currentDate: Date): List<RentalRecord>
+    + sendOverdueNotice(customer: Customer, record: RentalRecord): Void
+}
+
+' --- Relationships & Multiplicities ---
+
+' Store Assistant manages the Car gallery inventory and logs
+StoreAssistant "1" -- "*" Car : manages >
+StoreAssistant "1" -- "*" RentalRecord : creates and updates >
+StoreAssistant "1" ..> RentalReport : produces >
+StoreAssistant "1" -- "*" Customer : records information for >
+
+' Structural links between rental operations
+RentalRecord "*" -- "1" Car : references >
+RentalRecord "*" -- "1" Customer : bound to >
+RentalReport "1" o-- "*" RentalRecord : aggregates >
+
+' External Oversight
+MainOffice ..> RentalRecord : monitors deadlines of >
+MainOffice ..> Customer : sends overdue notices to >
+
+note top of StoreAssistant
+  <b>Query Behavior:</b>
+  searchAvailableCars() filters by isAvailable == true 
+  and sorts ascendingly by dailyPrice.
+  viewRentedCars() filters by isReturned == false.
+end note
+
+note bottom of MainOffice
+  <b>Late Arrival Loop:</b>
+  Triggers sendOverdueNotice() if scanForOverdueRentals() 
+  detects a RentalRecord where rentalEndDate < currentDate 
+  and isReturned is still false.
+end note
+
+@endum

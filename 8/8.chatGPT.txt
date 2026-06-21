@@ -1,0 +1,75 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+abstract class Train {
+  -trainNumber: String
+}
+
+class FreightTrain
+class PassengerTrain
+
+class Locomotive {
+  -engineNumber: String
+}
+
+abstract class Carriage {
+  -carriageNumber: String
+}
+
+class FreightCar
+class Coach
+class PassengerCoach
+class DiningCar
+
+class BigRoom {
+  -roomNumber: String
+}
+
+class Compartment {
+  -compartmentNumber: String
+  -seatCount: int
+}
+
+class AirConditioner {
+  -isOn: boolean
+  -maxAmbientTemperature: double
+  +turnOn()
+  +turnOff()
+}
+
+Train <|-- FreightTrain
+Train <|-- PassengerTrain
+
+Carriage <|-- FreightCar
+Carriage <|-- Coach
+Coach <|-- PassengerCoach
+Coach <|-- DiningCar
+
+Train "1" *-- "1..2" Locomotive : has
+
+FreightTrain "1" *-- "1..*" FreightCar : has only
+
+PassengerTrain "1" *-- "1..*" PassengerCoach : has
+PassengerTrain "1" *-- "0..1" DiningCar : has
+
+Coach "1" *-- "0..1" BigRoom : composed of
+Coach "1" *-- "1..*" Compartment : composed of
+Coach "1" *-- "1" AirConditioner : has
+
+note right of FreightTrain
+A freight train contains
+only freight cars.
+end note
+
+note right of PassengerTrain
+Passenger train cars include
+at least one passenger coach
+and at most one dining car.
+end note
+
+note bottom of AirConditioner
+Can operate only up to
+maxAmbientTemperature.
+end note
+
+@enduml

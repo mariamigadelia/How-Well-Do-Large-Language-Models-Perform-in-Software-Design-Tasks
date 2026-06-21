@@ -1,0 +1,40 @@
+@startuml
+class TimberFramedHouse {
+  - numberOfRooms : int
+  - numberOfFloors : int
+}
+
+abstract class BuildingMaterial {
+}
+
+class WoodenLog
+class AdobeBrick
+class Nail
+
+class Carpenter {
+  - name : String
+  - hourlyWage : double
+}
+
+class Hammer
+class Saw
+
+' Generalization: each material is a building material
+BuildingMaterial <|-- WoodenLog
+BuildingMaterial <|-- AdobeBrick
+BuildingMaterial <|-- Nail
+
+' Composition: a house is made up of its materials,
+' each material belongs to exactly one house
+TimberFramedHouse "1" *-- "5..10"      WoodenLog  : consists of
+TimberFramedHouse "1" *-- "200..400"   AdobeBrick : consists of
+TimberFramedHouse "1" *-- "1000..2000" Nail       : consists of
+
+' At least one carpenter is responsible for a house,
+' a carpenter works on at most one house at a time
+TimberFramedHouse "0..1" -- "1..*" Carpenter : is built by
+
+' Each carpenter owns exactly one hammer and one saw
+Carpenter "1" *-- "1" Hammer : uses
+Carpenter "1" *-- "1" Saw    : uses
+@enduml
