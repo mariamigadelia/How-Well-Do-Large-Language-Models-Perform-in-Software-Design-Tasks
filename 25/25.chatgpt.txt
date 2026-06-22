@@ -1,0 +1,36 @@
+@startuml
+
+class Vehicle {
+  vehicleID
+  make
+  model
+  rentalRates
+  status
+  maintenanceSchedule
+}
+
+class RentalTransaction {
+  transactionID
+  rentalDuration
+}
+
+class Customer {
+  customerID
+  name
+  contactInformation
+  rentalHistory
+}
+
+class MaintenanceRecord {
+  maintenanceID
+  date
+  type
+  description
+}
+
+Customer "1" -- "0..*" RentalTransaction
+Vehicle "1" -- "0..*" RentalTransaction
+
+Vehicle "1" -- "0..*" MaintenanceRecord
+
+@enduml

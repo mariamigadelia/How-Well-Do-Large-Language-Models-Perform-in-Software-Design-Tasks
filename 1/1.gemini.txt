@@ -1,0 +1,60 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam monochrome true
+skinparam shadowing false
+
+class LibrarySystem {
+    + searchItem(query: String): List<LoanItem>
+    + dailyUpdate(): void
+    + processIssue(memberId: String, itemId: String): void
+}
+
+class Member {
+    - name: String
+    - address: String
+    - dateOfBirth: Date
+    + hasValidMembership(): Boolean
+}
+
+class MembershipCard {
+    - memberNumber: String {unique}
+}
+
+class SubjectSection {
+    - classificationMark: String
+}
+
+abstract class LoanItem {
+    - barcode: String {unique}
+    - isReserved: Boolean
+    - dueDate: Date
+    + borrow(): void
+    + reserve(): void
+    + renew(): void
+}
+
+class LanguageTape {
+    - titleLanguage: String
+    - level: String
+}
+
+class Book {
+    - title: String
+    - authors: List<String>
+}
+
+' Relationships
+LibrarySystem "1" --> "*" Member : manages
+LibrarySystem "1" --> "*" LoanItem : manages
+LibrarySystem "1" --> "*" SubjectSection : contains
+
+Member "1" *-- "1" MembershipCard : issued >
+Member "1" --> "0..8" LoanItem : borrows >
+
+SubjectSection "1" *-- "*" LoanItem : categorizes >
+
+LoanItem <|-- LanguageTape
+LoanItem <|-- Book
+
+
+@endum()

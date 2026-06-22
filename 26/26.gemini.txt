@@ -1,0 +1,49 @@
+@startuml
+
+class OnlineAuctionPlatform {
+}
+
+class Auction {
+    auction_number
+    start_time
+    end_time
+    bidding_rules
+}
+
+class Bid {
+    bid_id
+    bid_amount
+    timestamp
+}
+
+class User {
+    user_id
+    username
+    user_profile
+    bidding_history
+}
+
+class Item {
+    item_id
+    name
+    description
+    current_bidding_status
+}
+
+class Seller {
+    seller_id
+    name
+}
+
+OnlineAuctionPlatform "1" *-- "*" Auction
+OnlineAuctionPlatform "1" *-- "*" User
+OnlineAuctionPlatform "1" *-- "*" Item
+OnlineAuctionPlatform "1" *-- "*" Seller
+
+Auction "1" *-- "*" Item
+User "1" -- "*" Bid : makes
+Auction "1" -- "*" Bid
+Item "1" -- "*" Bid
+Seller "1" -- "*" Item : lists
+
+@endum

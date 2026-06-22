@@ -1,0 +1,46 @@
+@startuml
+
+class Company {
+}
+
+abstract class Employee {
+    name
+    surname
+    earnings
+    employee_number
+}
+
+class Manager extends Employee {
+    monthly_fixed_salary
+}
+
+class CommissionWorker extends Employee {
+    flat_remuneration
+    sales_percent
+    sales_made_for_the_month
+}
+
+class HourlyWorker extends Employee {
+    number_of_hours_worked
+    wage_per_piece
+}
+
+class MedicalAid {
+    medical_aid_number
+    dependents
+    employee_contribution
+    company_contribution
+}
+
+class Pension {
+    pension_number
+    beneficiaries
+    amount
+    date_of_retirement
+}
+
+Company "1" *-- "*" Employee
+Employee "1" -- "1" MedicalAid
+Manager "1" -- "0..1" Pension
+
+@endum

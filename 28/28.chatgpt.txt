@@ -1,0 +1,61 @@
+@startuml
+
+class Property {
+  propertyID
+  type
+  location
+  description
+  price
+}
+
+class Seller
+
+class Agent {
+  agentID
+  name
+  contactInformation
+  propertyListings
+}
+
+class User {
+  userID
+  name
+  contactInformation
+  inquiries
+}
+
+class Listing {
+  listingID
+  listingDate
+}
+
+class Viewing {
+  viewingID
+  dateTime
+}
+
+class Inquiry {
+  inquiryID
+}
+
+class Transaction {
+  transactionID
+  transactionDate
+  auditTrail
+}
+
+Property "1" -- "0..*" Listing
+Agent "1" -- "0..*" Listing
+Seller "1" -- "0..*" Property
+
+User "1" -- "0..*" Inquiry
+Property "1" -- "0..*" Inquiry
+Agent "1" -- "0..*" Inquiry
+
+User "1" -- "0..*" Viewing
+Property "1" -- "0..*" Viewing
+
+User "1" -- "0..*" Transaction
+Property "1" -- "0..*" Transaction
+
+@enduml

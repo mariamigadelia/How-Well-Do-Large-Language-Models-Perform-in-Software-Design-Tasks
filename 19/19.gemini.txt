@@ -1,0 +1,37 @@
+@startuml
+
+class ProjectManagementSystem {
+}
+
+abstract class Student {
+    name
+    email
+    student_id
+    category
+}
+
+class UndergraduateStudent extends Student {
+}
+
+class GraduateStudent extends Student {
+}
+
+abstract class Project {
+    title
+    description
+    start_date
+    deadline
+    grade
+}
+
+class ResearchProject extends Project {
+}
+
+class CourseBasedProject extends Project {
+}
+
+ProjectManagementSystem "1" *-- "*" Student
+ProjectManagementSystem "1" *-- "*" Project
+Student "*" -- "*" Project
+
+@endum

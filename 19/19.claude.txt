@@ -1,0 +1,41 @@
+
+```plantuml
+@startuml
+
+class Student {
+  name
+  email
+  studentId
+  category
+}
+
+class UndergraduateStudent {
+}
+
+class GraduateStudent {
+}
+
+class Project {
+  title
+  description
+  startDate
+  deadline
+  grade
+}
+
+class ResearchProject {
+}
+
+class CourseBasedProject {
+}
+
+Student "0..*" -- "1..*" Project
+
+Student <|-- UndergraduateStudent
+Student <|-- GraduateStudent
+
+Project <|-- ResearchProject
+Project <|-- CourseBasedProject
+
+@enduml
+```

@@ -1,0 +1,63 @@
+@startuml
+
+class Company
+
+class Department {
+  ID
+  email
+}
+
+abstract class Employee {
+  name
+  email
+  employeeID
+  employeeNumber
+}
+
+class TemporaryEmployee
+class PermanentEmployee
+
+abstract class Project {
+  title
+  description
+  budgetAmount
+  deadline
+}
+
+class ProductionProject {
+  siteCode
+}
+
+class ResearchProject
+class EducationProject
+class CommunityProject
+
+abstract class FundingGroup
+
+class PrivateGroup
+class GovernmentGroup
+class MixedGroup
+
+Company "1" -- "2..8" Department
+
+Department "1" -- "0..*" Employee
+Department "1" -- "0..*" Project
+
+Employee <|-- TemporaryEmployee
+Employee <|-- PermanentEmployee
+
+Project <|-- ProductionProject
+Project <|-- ResearchProject
+Project <|-- EducationProject
+Project <|-- CommunityProject
+
+FundingGroup <|-- PrivateGroup
+FundingGroup <|-- GovernmentGroup
+FundingGroup <|-- MixedGroup
+
+EducationProject "0..*" -- "1" FundingGroup
+CommunityProject "0..*" -- "1" FundingGroup
+
+Employee "0..*" -- "0..*" Project
+
+@enduml

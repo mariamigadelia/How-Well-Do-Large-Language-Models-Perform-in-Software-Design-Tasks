@@ -1,0 +1,36 @@
+ @startuml
+
+class Customer {
+}
+
+class Order {
+    status
+}
+
+class ItemLine {
+    quantity
+}
+
+abstract class LibraryItem {
+    status
+}
+
+class BookItem extends LibraryItem {
+    format
+}
+
+abstract class DigitalItem extends LibraryItem {
+    option
+}
+
+class AudioItem extends DigitalItem {
+}
+
+class VideoItem extends DigitalItem {
+}
+
+Customer "1" -- "*" Order
+Order "1" *-- "*" ItemLine
+ItemLine "*" -- "1" LibraryItem
+
+@endum

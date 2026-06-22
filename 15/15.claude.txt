@@ -1,0 +1,38 @@
+
+```plantuml
+@startuml
+
+class University {
+}
+
+class Student {
+  name
+  ID
+}
+
+class PartTimeStudent {
+}
+
+class FullTimeStudent {
+}
+
+class Course {
+}
+
+class ResearchBasedCourse {
+}
+
+class ProjectBasedCourse {
+}
+
+University "1" -- "0..*" Student
+Student "0..*" -- "0..5" Course
+
+Student <|-- PartTimeStudent
+Student <|-- FullTimeStudent
+
+Course <|-- ResearchBasedCourse
+Course <|-- ProjectBasedCourse
+
+@enduml
+```

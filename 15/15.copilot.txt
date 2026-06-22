@@ -1,0 +1,26 @@
+@startuml
+
+class University {
+}
+
+class Student {
+  -name
+  -id
+  -status
+}
+
+class Course {
+}
+
+class ResearchCourse {
+}
+
+class ProjectCourse {
+}
+
+University "1" -- "many" Student
+Student "1" -- "0..5" Course
+Course <|-- ResearchCourse
+Course <|-- ProjectCourse
+
+@enduml

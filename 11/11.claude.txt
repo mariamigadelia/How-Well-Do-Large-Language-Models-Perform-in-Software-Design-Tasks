@@ -1,0 +1,85 @@
+@startuml
+
+' ===== Classes =====
+
+class Company {
+}
+
+class Department {
+  - id : String
+  - email : String
+}
+
+abstract class Employee {
+  - name : String
+  - email : String
+  - employeeID : String
+  - employeeNumber : String
+}
+
+class TemporaryEmployee {
+}
+
+class PermanentEmployee {
+}
+
+abstract class Project {
+  - title : String
+  - description : String
+  - budgetAmount : double
+  - deadline : Date
+}
+
+class ProductionProject {
+  - siteCode : String
+}
+
+class ResearchProject {
+}
+
+class EducationProject {
+}
+
+class CommunityProject {
+}
+
+abstract class FundingGroup {
+}
+
+class PrivateGroup {
+}
+
+class GovernmentGroup {
+}
+
+class MixedGroup {
+}
+
+' ===== Composition: Company - Department =====
+Company "1" *-- "2..8" Department
+
+' ===== Association: Department hires Employees for Projects =====
+Department "1" -- "*" Employee : hires >
+Department "1" -- "*" Project : manages >
+Employee "*" -- "*" Project : works on >
+
+' ===== Inheritance: Employee =====
+Employee <|-- TemporaryEmployee
+Employee <|-- PermanentEmployee
+
+' ===== Inheritance: Project =====
+Project <|-- ProductionProject
+Project <|-- ResearchProject
+Project <|-- EducationProject
+Project <|-- CommunityProject
+
+' ===== Inheritance: FundingGroup =====
+FundingGroup <|-- PrivateGroup
+FundingGroup <|-- GovernmentGroup
+FundingGroup <|-- MixedGroup
+
+' ===== Association: Education & Community Projects - FundingGroup =====
+EducationProject "*" --> "1" FundingGroup : funded by >
+CommunityProject "*" --> "1" FundingGroup : funded by >
+
+@enduml

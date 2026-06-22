@@ -1,0 +1,59 @@
+@startuml
+
+class OnlineRideshareSystem {
+}
+
+abstract class User {
+    id
+    email
+    phone_number
+}
+
+class Driver extends User {
+}
+
+class Customer extends User {
+}
+
+abstract class Trip {
+    departure_station
+    arrival_station
+    number_seats
+    departure_date
+    departure_time
+    arrival_time
+    price
+}
+
+class DirectTrip extends Trip {
+}
+
+class IndirectTrip extends Trip {
+}
+
+class Booking {
+    booking_time
+}
+
+class MembershipPackage {
+}
+
+enum RewardType {
+    cashback
+    discounts
+    points
+}
+
+class Reward {
+    type
+}
+
+OnlineRideshareSystem "1" *-- "*" User
+OnlineRideshareSystem "1" *-- "*" Trip
+Driver "1" -- "*" Trip : posts
+Customer "1" -- "*" Booking
+Trip "1" -- "*" Booking
+User "1" -- "0..1" MembershipPackage
+MembershipPackage "1" *-- "*" Reward
+
+@endum

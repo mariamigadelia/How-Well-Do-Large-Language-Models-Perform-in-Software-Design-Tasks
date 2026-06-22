@@ -1,0 +1,60 @@
+@startuml
+
+class Company {
+}
+
+class Department {
+    id
+    email
+}
+
+abstract class Employee {
+    name
+    email
+    employee_id
+    employee_number
+}
+
+class TemporaryEmployee extends Employee {
+}
+
+class PermanentEmployee extends Employee {
+}
+
+abstract class Project {
+    title
+    description
+    budget_amount
+    deadline
+}
+
+class ProductionProject extends Project {
+    site_code
+}
+
+class ResearchProject extends Project {
+}
+
+class EducationProject extends Project {
+}
+
+class CommunityProject extends Project {
+}
+
+enum FundingGroupType {
+    private_group
+    government_group
+    mixed_group
+}
+
+class FundingGroup {
+    type
+}
+
+Company "1" *-- "2..8" Department
+Department "1" -- "*" Employee : hires
+Employee "*" -- "*" Project
+EducationProject "*" -- "1" FundingGroup
+CommunityProject "*" -- "1" FundingGroup
+
+@endum

@@ -1,0 +1,31 @@
+@startuml
+
+class Map {
+  -scale
+  -name
+  -latitudeTopLeft
+  -longitudeTopLeft
+  -heightMeters
+  -widthMeters
+}
+
+abstract class Feature {
+  -name
+  -featureType
+}
+
+class CurveFeature {
+}
+
+class PointFeature {
+}
+
+class RegionFeature {
+}
+
+Map "1" -- "many" Feature
+Feature <|-- CurveFeature
+Feature <|-- PointFeature
+Feature <|-- RegionFeature
+
+@enduml

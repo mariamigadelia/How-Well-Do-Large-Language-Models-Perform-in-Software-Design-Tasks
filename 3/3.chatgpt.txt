@@ -1,0 +1,94 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+'========================
+' Core Components
+'========================
+class WHOISClient {
+    +connect()
+    +sendRequest()
+    +receiveResponse()
+    +detectConnectionClosed()
+}
+
+class WHOISServer {
+    -port : int = 43
+    +listen()
+    +processRequest()
+    +sendResponse()
+    +closeConnection()
+}
+
+WHOISClient --> WHOISServer : sends request
+WHOISServer --> WHOISClient : returns response
+
+'========================
+' Request and Response
+'========================
+class Request {
+    -text : String
+    -terminatedBy : String = "CR LF"
+}
+
+class Response {
+    -content : String
+    -multipleLines : Boolean
+}
+
+WHOISClient *-- Request
+WHOISServer *-- Response
+
+WHOISServer ..> Request : processes
+WHOISClient ..> Response : receives
+
+'========================
+' TCP Connection
+'========================
+class TCPConnection {
+    -port : int = 43
+    -state : ConnectionState
+    +open()
+    +close()
+}
+
+enum ConnectionState {
+    OPEN
+    CLOSED
+}
+
+WHOISClient --> TCPConnection : uses
+WHOISServer --> TCPConnection : uses
+
+'========================
+' End-of-Response Detection
+'========================
+class ConnectionMonitor {
+    +detectClosedConnection()
+}
+
+WHOISClient *-- ConnectionMonitor
+ConnectionMonitor ..> TCPConnection
+
+note right of Request
+Requests are text strings
+terminated by ASCII CR
+followed by ASCII LF.
+end note
+
+note right of Response
+Responses may contain
+multiple lines.
+CR or LF characters do not
+indicate end of response.
+end note
+
+note bottom of TCPConnection
+The server closes the
+connection when all output
+has been sent.
+Connection closure signals
+to the client that the
+response is complete.
+end note
+
+@enduml

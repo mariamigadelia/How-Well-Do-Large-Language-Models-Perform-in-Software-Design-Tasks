@@ -1,0 +1,52 @@
+@startuml
+
+class User {
+  ID
+  email
+  phoneNumber
+}
+
+class Driver
+class Customer
+
+class Trip {
+  departureStation
+  arrivalStation
+  numberOfSeats
+  departureDate
+  departureTime
+  arrivalTime
+  price
+}
+
+class DirectTrip
+class IndirectTrip
+
+class Booking
+
+class Membership
+
+class Reward
+
+class Cashback
+class Discount
+class Points
+
+User <|-- Driver
+User <|-- Customer
+
+Driver "1" -- "0..*" Trip
+Customer "1" -- "0..*" Booking
+Trip "1" -- "0..*" Booking
+Customer "0..1" -- "0..1" Membership
+
+Trip <|-- DirectTrip
+Trip <|-- IndirectTrip
+
+Membership "1" -- "0..*" Reward
+
+Reward <|-- Cashback
+Reward <|-- Discount
+Reward <|-- Points
+
+@enduml

@@ -1,0 +1,59 @@
+
+```plantuml
+@startuml
+
+class Event {
+}
+
+class ConcertEvent {
+}
+
+class TheatricalEvent {
+}
+
+class Venue {
+}
+
+class OpenVenue {
+}
+
+class ClosedVenue {
+}
+
+class Seat {
+  number
+}
+
+class Section {
+}
+
+class ParquetCenter {
+}
+
+class BalconyCenter {
+}
+
+class Others {
+}
+
+class Show {
+  date
+}
+
+Event "0..*" -- "1" Venue
+Venue "1" *-- "1..*" Seat
+Seat "0..*" -- "1" Section
+Event "1" -- "0..*" Show
+
+Event <|-- ConcertEvent
+Event <|-- TheatricalEvent
+
+Venue <|-- OpenVenue
+Venue <|-- ClosedVenue
+
+Section <|-- ParquetCenter
+Section <|-- BalconyCenter
+Section <|-- Others
+
+@enduml
+```

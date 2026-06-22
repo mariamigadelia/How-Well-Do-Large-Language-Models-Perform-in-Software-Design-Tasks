@@ -1,0 +1,41 @@
+@startuml
+
+entity Movie {
+  *title : String
+  *year : Integer
+  length : Integer
+  plotOutline : Text
+}
+
+entity Studio {
+  *name : String
+  address : String
+}
+
+entity Genre {
+  *name : String
+}
+
+entity Director {
+  *name : String
+  dateOfBirth : Date
+}
+
+entity Actor {
+  *name : String
+  dateOfBirth : Date
+}
+
+entity Quote {
+  *text : String
+}
+
+Movie }o--|| Studio : "produced by"
+Movie }o--o{ Genre : "classified under"
+Movie }o--o{ Director : "directed by"
+Movie }o--o{ Actor : "acted in"
+Actor }o--o{ Movie : "role"
+Movie }o--o{ Quote : "has"
+Quote }o--|| Actor : "spoken by"
+
+@enduml

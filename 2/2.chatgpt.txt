@@ -1,0 +1,114 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+'========================
+' Steam Boiler System
+'========================
+class SteamBoilerSystem {
+    +monitorWaterLevel()
+    +controlWaterLevel()
+    +generateStatusInformation()
+    +handoverControl()
+    +shutdown()
+}
+
+class SteamBoiler {
+    -waterLevel : float
+    -steamProductionRate : float
+    -toleranceLevel : float
+    +produceSteam()
+}
+
+class Pump {
+    -status : PumpStatus
+    +supplyWater()
+    +start()
+    +stop()
+}
+
+SteamBoilerSystem *-- SteamBoiler
+SteamBoilerSystem *-- Pump
+
+'========================
+' Measuring Devices
+'========================
+abstract class MeasuringDevice {
+    -working : Boolean
+    +measure()
+}
+
+class WaterLevelSensor {
+    +measureWaterLevel()
+}
+
+class PumpStatusSensor {
+    +measurePumpStatus()
+}
+
+class SteamSensor {
+    +measureSteamProduction()
+}
+
+MeasuringDevice <|-- WaterLevelSensor
+MeasuringDevice <|-- PumpStatusSensor
+MeasuringDevice <|-- SteamSensor
+
+SteamBoilerSystem *-- WaterLevelSensor
+SteamBoilerSystem *-- PumpStatusSensor
+SteamBoilerSystem *-- SteamSensor
+
+'========================
+' Communication
+'========================
+class MessageTransmissionSystem {
+    +transmitSignal()
+}
+
+SteamBoilerSystem *-- MessageTransmissionSystem
+
+WaterLevelSensor ..> MessageTransmissionSystem
+PumpStatusSensor ..> MessageTransmissionSystem
+SteamSensor ..> MessageTransmissionSystem
+
+'========================
+' Operator Interface
+'========================
+class OperatorDesk {
+    +displayStatus()
+    +takeControl()
+    +stopSystem()
+}
+
+SteamBoilerSystem --> OperatorDesk : status information
+
+'========================
+' Fault Tolerance
+'========================
+class FaultMonitor {
+    +detectDeviceFailure()
+    +evaluateSafeOperation()
+}
+
+SteamBoilerSystem *-- FaultMonitor
+
+FaultMonitor ..> WaterLevelSensor
+FaultMonitor ..> PumpStatusSensor
+FaultMonitor ..> SteamSensor
+FaultMonitor ..> Pump
+
+FaultMonitor --> OperatorDesk : hand over control
+
+note right of FaultMonitor
+The system continues operation
+even with some failed devices.
+If safe operation is impossible,
+control is transferred to the
+operator desk.
+end note
+
+note bottom of OperatorDesk
+Operator may stop the system
+at any time.
+end note
+
+@enduml

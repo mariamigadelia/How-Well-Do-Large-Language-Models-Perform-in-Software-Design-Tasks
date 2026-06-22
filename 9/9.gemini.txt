@@ -1,0 +1,54 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam monochrome true
+skinparam shadowing false
+
+class Movie {
+    - title: String
+    - yearOfRelease: int
+    - lengthInMinutes: int
+    - plotOutline: String
+    - genres: List<String>
+}
+
+abstract class Person {
+    - name: String
+    - dateOfBirth: Date
+}
+
+class Actor {
+}
+
+class Director {
+}
+
+class Studio {
+    - name: String {unique}
+    - address: String
+}
+
+class Quote {
+    - quoteText: String
+}
+
+class Performance {
+    - roleName: String
+}
+
+' Inheritance
+Person <|-- Actor
+Person <|-- Director
+
+' Relationships
+Studio "1" -- "1..*" Movie : produces >
+Director "1..*" -- "1..*" Movie : directs >
+
+' Many-to-many relationship between Actor and Movie via Performance association class
+Actor "1..*" -- "1..*" Movie
+(Actor, Movie) .. Performance
+
+' Quotes are linked to a specific movie and spoken by a specific actor in that movie
+Movie "1" *-- "*" Quote : contains >
+Performance "1" -- "*" Quote : spoken by <
+
+@endum()

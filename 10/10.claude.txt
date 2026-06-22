@@ -1,0 +1,46 @@
+
+```plantuml
+@startuml
+
+class Animal {
+  ID
+  name
+}
+
+class Owner {
+  ID
+  name
+  address
+  phoneNumber
+}
+
+class Breed {
+  name
+}
+
+class Appointment {
+  date
+  time
+}
+
+class Physician {
+  ID
+  name
+  address
+  phoneNumber
+}
+
+class Condition {
+  common_name
+  scientific_name
+}
+
+Owner "0..1" -- "0..*" Animal
+Breed "0..1" -- "0..*" Animal
+Appointment "0..*" -- "1" Animal
+Appointment "0..*" -- "1" Physician
+Appointment "0..*" -- "0..*" Condition
+Breed "0..*" -- "0..*" Condition
+
+@enduml
+```

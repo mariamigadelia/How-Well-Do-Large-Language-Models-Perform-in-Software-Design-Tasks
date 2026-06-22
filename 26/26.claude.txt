@@ -1,0 +1,44 @@
+
+```plantuml
+@startuml
+
+class Auction {
+  auctionNumber
+  startTime
+  endTime
+  biddingRules
+}
+
+class Item {
+  itemID
+  name
+  description
+  currentBiddingStatus
+}
+
+class Bid {
+  bidID
+  bidAmount
+  timestamp
+}
+
+class User {
+  userID
+  username
+  userProfile
+  biddingHistory
+}
+
+class Seller {
+  sellerID
+  name
+}
+
+Auction "1" -- "1..*" Item
+User "1" -- "0..*" Bid
+Auction "1" -- "0..*" Bid
+Item "1" -- "0..*" Bid
+Seller "1" -- "0..*" Item
+
+@enduml
+```

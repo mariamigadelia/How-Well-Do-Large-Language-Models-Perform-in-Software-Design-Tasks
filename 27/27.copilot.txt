@@ -1,0 +1,45 @@
+@startuml
+
+abstract class Employee {
+  -name
+  -surname
+  -employeeNumber
+  -earnings
+}
+
+class Manager {
+  -monthlyFixedSalary
+}
+
+class CommissionWorker {
+  -flatRemuneration
+  -salesPercent
+  -monthlySales
+}
+
+class HourlyWorker {
+  -hoursWorked
+  -wagePerPiece
+}
+
+class MedicalAid {
+  -medicalAidNumber
+  -dependents
+  -employeeContribution
+  -companyContribution
+}
+
+class Pension {
+  -pensionNumber
+  -beneficiaries
+  -amount
+  -retirementDate
+}
+
+Employee <|-- Manager
+Employee <|-- CommissionWorker
+Employee <|-- HourlyWorker
+Employee "1" -- "1" MedicalAid
+Manager "1" -- "1" Pension
+
+@enduml

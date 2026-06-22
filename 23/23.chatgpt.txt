@@ -1,0 +1,33 @@
+@startuml
+
+class User {
+  userID
+  username
+  profilePicture
+  settings
+}
+
+class Post {
+  postID
+  content
+  timestamp
+}
+
+class Comment {
+  commentID
+  content
+  timestamp
+}
+
+class Like {
+  likeID
+}
+
+User "1" -- "0..*" Post
+User "1" -- "0..*" Comment
+User "1" -- "0..*" Like
+
+Post "1" -- "0..*" Comment
+Post "1" -- "0..*" Like
+
+@enduml

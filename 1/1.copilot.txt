@@ -1,0 +1,57 @@
+@startuml
+
+class Library {
+  +searchItem()
+  +dailyUpdateRecords()
+}
+
+class Section {
+  -classificationMark : String
+}
+
+class Member {
+  -memberNumber : String
+  -name : String
+  -address : String
+  -dateOfBirth : Date
+  +borrowItem(item : LoanItem)
+  +returnItem(item : LoanItem)
+}
+
+class MembershipCard {
+  -memberNumber : String
+}
+
+abstract class LoanItem {
+  -barCode : String
+  -status : String  // borrowed, reserved, renewed
+  +borrow()
+  +reserve()
+  +renew()
+}
+
+class Book {
+  -title : String
+  -authors : List<String>
+}
+
+class LanguageTape {
+  -titleLanguage : String
+  -level : String
+}
+
+class BarCodeReader {
+  +scanMemberCard()
+  +scanItem()
+}
+
+Library "1" -- "many" Section
+Section "1" -- "many" LoanItem
+Member "1" -- "1" MembershipCard
+Member "1" -- "0..8" LoanItem
+LoanItem <|-- Book
+LoanItem <|-- LanguageTape
+BarCodeReader ..> Member
+BarCodeReader ..> LoanItem
+
+@enduml

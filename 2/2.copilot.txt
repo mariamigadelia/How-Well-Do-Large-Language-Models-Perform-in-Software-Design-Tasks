@@ -1,0 +1,47 @@
+@startuml
+
+class SteamBoiler {
+  -waterLevel : double
+  -tolerance : double
+  +produceSteam()
+  +checkSafety()
+}
+
+class WaterLevelSensor {
+  +measureWaterLevel() : double
+}
+
+class Pump {
+  -status : String
+  +provideWater()
+}
+
+class PumpStatusSensor {
+  +measurePumpStatus() : String
+}
+
+class SteamSensor {
+  +measureSteamAmount() : double
+}
+
+class OperatorDesk {
+  +displayStatus()
+  +takeControl()
+  +stopSystem()
+}
+
+class MessageTransmissionSystem {
+  +transmitSignal()
+}
+
+SteamBoiler "1" -- "1" WaterLevelSensor
+SteamBoiler "1" -- "1" Pump
+SteamBoiler "1" -- "1" SteamSensor
+Pump "1" -- "1" PumpStatusSensor
+WaterLevelSensor ..> MessageTransmissionSystem
+PumpStatusSensor ..> MessageTransmissionSystem
+SteamSensor ..> MessageTransmissionSystem
+MessageTransmissionSystem ..> OperatorDesk
+OperatorDesk ..> SteamBoiler
+
+@enduml

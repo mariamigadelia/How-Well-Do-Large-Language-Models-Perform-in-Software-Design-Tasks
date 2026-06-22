@@ -1,0 +1,94 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+'========================
+' Core Library Structure
+'========================
+class Library {
+    +searchItem()
+    +dailyUpdateRecords()
+}
+
+class SubjectSection {
+    -classificationMark : String
+}
+
+Library "1" *-- "1..*" SubjectSection
+
+'========================
+' Members
+'========================
+class Member {
+    -memberNumber : String
+    -name : String
+    -address : String
+    -dateOfBirth : Date
+    -membershipValid : Boolean
+}
+
+class MembershipCard {
+    -memberNumber : String
+}
+
+Member "1" *-- "1" MembershipCard : issued >
+
+'========================
+' Loan Items
+'========================
+abstract class LoanItem {
+    -barCode : String
+    +borrow()
+    +reserve()
+    +renew()
+}
+
+class Book {
+    -title : String
+    -authors : String[*]
+}
+
+class LanguageTape {
+    -titleLanguage : String
+    -level : String
+}
+
+LoanItem <|-- Book
+LoanItem <|-- LanguageTape
+
+SubjectSection "1" -- "0..*" LoanItem : contains >
+
+'========================
+' Borrowing Constraints
+'========================
+Member "1" -- "0..8" LoanItem : borrows >
+
+'========================
+' Loan Processing
+'========================
+class LoanTransaction {
+    +issueItem()
+    +stampItem()
+}
+
+Member "1" -- "0..*" LoanTransaction
+LoanItem "1" -- "0..*" LoanTransaction
+
+class BarcodeReader {
+    +scanMembershipNumber()
+    +scanItemBarCode()
+}
+
+LoanTransaction ..> BarcodeReader : uses
+
+note right of LoanTransaction
+Issue process:
+1. Scan or manually enter member number
+2. Verify membership validity
+3. Ensure fewer than 8 items on loan
+4. Scan or enter item barcode
+5. Check item availability
+6. Stamp item
+7. Issue item
+end note
+
+@enduml

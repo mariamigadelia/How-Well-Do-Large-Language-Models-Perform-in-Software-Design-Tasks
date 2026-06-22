@@ -1,0 +1,85 @@
+
+```plantuml
+@startuml WHOIS Class Diagram
+
+class WhoisServer {
+  - port : int = 43
+  - isListening : boolean
+  + listen() : void
+  + acceptConnection() : TCPConnection
+  + processRequest(req : Request) : Response
+  + sendResponse(resp : Response) : void
+  + closeConnection() : void
+}
+
+class WhoisClient {
+  - serverAddress : String
+  + connect(server : WhoisServer) : TCPConnection
+  + sendRequest(req : Request) : void
+  + receiveResponse() : Response
+  + onConnectionClosed() : void
+}
+
+class TCPConnection {
+  - port : int = 43
+  - isOpen : boolean
+  + open() : void
+  + close() : void
+  + send(data : String) : void
+  + receive() : String
+}
+
+class Request {
+  - queryText : String
+  - terminator : String = "CR LF"
+  + build(text : String) : String
+  + isTerminated() : boolean
+}
+
+class Response {
+  - content : String
+  - lines : List<String>
+  + appendLine(line : String) : void
+  + isComplete() : boolean
+}
+
+' ---- Relationships ----
+
+WhoisClient "1" --> "1" TCPConnection : establishes >
+WhoisServer "1" --> "0..*" TCPConnection : listens via >
+
+WhoisClient ..> Request : creates >
+WhoisServer ..> Request : receives >
+
+WhoisServer ..> Response : produces >
+WhoisClient ..> Response : receives >
+
+Request "1" ..> "1" TCPConnection : sent over >
+Response "1" ..> "1" TCPConnection : sent over >
+
+note right of WhoisServer
+  Listens on TCP port 43.
+  Closes the connection as soon
+  as output is finished.
+end note
+
+note right of Request
+  Text request terminated
+  with ASCII CR then ASCII LF.
+end note
+
+note bottom of Response
+  May contain multiple lines.
+  Presence of CR/LF does NOT
+  indicate end of response.
+  End = connection closed.
+end note
+
+note left of WhoisClient
+  A closed connection indicates
+  that the full response
+  has been received.
+end note
+
+@enduml
+```

@@ -1,0 +1,43 @@
+@startuml
+
+class Event
+
+class ConcertEvent
+class TheatricalEvent
+
+class Venue
+
+class OpenVenue
+class ClosedVenue
+
+class Seat {
+  number
+}
+
+abstract class Section
+
+class ParquetCenter
+class BalconyCenter
+class OtherSection
+
+class Show {
+  date
+}
+
+Event <|-- ConcertEvent
+Event <|-- TheatricalEvent
+
+Venue <|-- OpenVenue
+Venue <|-- ClosedVenue
+
+Venue "1" -- "1..*" Seat
+Seat "0..*" -- "1" Section
+
+Event "1" -- "0..*" Show
+Venue "1" -- "0..*" Show
+
+Section <|-- ParquetCenter
+Section <|-- BalconyCenter
+Section <|-- OtherSection
+
+@enduml

@@ -1,0 +1,58 @@
+@startuml
+
+abstract class User {
+  -id
+  -email
+  -phone
+}
+
+class Driver {
+}
+
+class Customer {
+}
+
+abstract class Trip {
+  -departureStation
+  -arrivalStation
+  -numberOfSeats
+  -departureDate
+  -departureTime
+  -arrivalTime
+  -price
+}
+
+class DirectTrip {
+}
+
+class IndirectTrip {
+}
+
+class MembershipPackage {
+}
+
+abstract class Reward {
+}
+
+class Cashback {
+}
+
+class Discount {
+}
+
+class Points {
+}
+
+User <|-- Driver
+User <|-- Customer
+Driver "1" -- "many" Trip
+Trip <|-- DirectTrip
+Trip <|-- IndirectTrip
+Customer "many" -- "many" Trip : books
+User "0..1" -- "1" MembershipPackage
+MembershipPackage "1" -- "many" Reward
+Reward <|-- Cashback
+Reward <|-- Discount
+Reward <|-- Points
+
+@enduml

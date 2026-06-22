@@ -1,0 +1,29 @@
+
+```plantuml
+@startuml
+
+class Patient {
+  ID
+  biodata
+  medicalHistory
+  diagnoses
+  treatmentPlans
+}
+
+class Physician {
+  physicianID
+  name
+  contactDetails
+}
+
+class Appointment {
+  appointmentID
+  date
+  time
+}
+
+Physician "1" -- "0..*" Appointment
+Patient "1" -- "0..*" Appointment
+
+@enduml
+```

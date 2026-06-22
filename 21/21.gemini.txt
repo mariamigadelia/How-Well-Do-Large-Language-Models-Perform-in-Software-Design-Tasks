@@ -1,0 +1,32 @@
+ @startuml
+
+class HospitalSystem {
+}
+
+class Patient {
+    id
+    biodata_information
+    medical_history
+    diagnoses
+    treatment_plans
+}
+
+class Physician {
+    physician_id
+    name
+    contact_details
+}
+
+class Appointment {
+    appointment_id
+    date
+    time
+}
+
+HospitalSystem "1" *-- "*" Patient
+HospitalSystem "1" *-- "*" Physician
+HospitalSystem "1" *-- "*" Appointment
+Physician "1" -- "*" Appointment : responsible_for
+Patient "1" -- "*" Appointment : attends
+
+@endum

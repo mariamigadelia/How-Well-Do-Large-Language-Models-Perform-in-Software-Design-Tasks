@@ -1,0 +1,36 @@
+@startuml
+
+class FlightBookingSystem {
+}
+
+class Flight {
+    flight_number
+    departure_time
+    arrival_time
+    seat_availability
+}
+
+class Reservation {
+    reservation_id
+    check_in_date
+    check_out_date
+}
+
+class Passenger {
+    passenger_id
+    name
+    contact_information
+    order_history
+}
+
+class Payment {
+}
+
+FlightBookingSystem "1" *-- "*" Flight
+FlightBookingSystem "1" *-- "*" Passenger
+FlightBookingSystem "1" *-- "*" Reservation
+Passenger "1" -- "*" Reservation
+Flight "1" -- "*" Reservation
+Reservation "1" -- "1" Payment
+
+@endum

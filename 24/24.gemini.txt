@@ -1,0 +1,41 @@
+@startuml
+
+class WeatherArchiveSystem {
+}
+
+class Location {
+    location_id
+    coordinate
+    name
+    geographical_description
+}
+
+class WeatherData {
+    temperature
+    humidity
+    wind_speed
+    precipitation
+    timestamp
+}
+
+class Sensor {
+    sensor_id
+    name
+    type
+    calibration_details
+}
+
+class Forecast {
+    id
+    forecast_data
+    timestamp
+}
+
+WeatherArchiveSystem "1" *-- "*" Location
+WeatherArchiveSystem "1" *-- "*" Sensor
+WeatherArchiveSystem "1" *-- "*" Forecast
+Location "1" *-- "*" WeatherData
+Sensor "1" -- "*" WeatherData
+Location "1" -- "*" Forecast
+
+@endum

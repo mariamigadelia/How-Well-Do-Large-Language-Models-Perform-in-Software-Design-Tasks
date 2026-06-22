@@ -1,0 +1,50 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam monochrome true
+skinparam shadowing false
+
+class WhoisServer {
+    - listeningPort: int = 43
+    + listenForRequests(): void
+    + processRequest(request: TextRequest): TextResponse
+    + sendResponse(response: TextResponse, client: WhoisClient): void
+}
+
+class WhoisClient {
+    + connectToServer(serverIp: String): TcpConnection
+    + makeRequest(query: String): TextRequest
+    + receiveResponse(connection: TcpConnection): TextResponse
+}
+
+class TcpConnection {
+    - isClosed: Boolean
+    + sendData(data: String): void
+    + receiveData(): String
+    + close(): void
+}
+
+class TextRequest {
+    - queryText: String
+    - terminator: String = "CRLF"
+    + isValid(): Boolean
+}
+
+class TextResponse {
+    - lines: List<String>
+    + addLine(text: String): void
+    + getContent(): String
+}
+
+' Relationships and Interactions
+WhoisServer "1" --> "*" TcpConnection : manages >
+WhoisClient "1" --> "1" TcpConnection : establishes >
+
+WhoisClient ..> TextRequest : creates >
+WhoisServer ..> TextResponse : creates >
+
+WhoisServer ..> TextRequest : reads >
+WhoisClient ..> TextResponse : processes >
+
+
+
+@endum()

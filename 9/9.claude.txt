@@ -1,0 +1,108 @@
+
+```plantuml
+@startuml Movie Database ER Diagram
+
+' ---- Notation ----
+' PK = Primary Key, FK = Foreign Key
+hide circle
+skinparam linetype ortho
+
+entity "Movie" as movie {
+  * title : String <<PK>>
+  * year : int <<PK>>
+  --
+  length : int
+  plotOutline : String
+}
+
+entity "Studio" as studio {
+  * name : String <<PK>>
+  --
+  address : String
+}
+
+entity "Genre" as genre {
+  * name : String <<PK>>
+}
+
+entity "Actor" as actor {
+  * name : String <<PK>>
+  * dateOfBirth : Date <<PK>>
+}
+
+entity "Director" as director {
+  * name : String <<PK>>
+  * dateOfBirth : Date <<PK>>
+}
+
+entity "QuotableQuote" as quote {
+  * quoteId : int <<PK>>
+  --
+  text : String
+  # movieTitle : String <<FK>>
+  # movieYear : int <<FK>>
+  # actorName : String <<FK>>
+  # actorDOB : Date <<FK>>
+}
+
+' ---- Associative entities (for M:N relationships with attributes) ----
+
+entity "ActsIn" as actsin {
+  * movieTitle : String <<FK>>
+  * movieYear : int <<FK>>
+  * actorName : String <<FK>>
+  * actorDOB : Date <<FK>>
+  --
+  role : String
+}
+
+entity "Directs" as directs {
+  * movieTitle : String <<FK>>
+  * movieYear : int <<FK>>
+  * directorName : String <<FK>>
+  * directorDOB : Date <<FK>>
+}
+
+entity "ClassifiedAs" as classified {
+  * movieTitle : String <<FK>>
+  * movieYear : int <<FK>>
+  * genreName : String <<FK>>
+}
+
+' ---- Relationships (Crow's Foot) ----
+
+' A studio produces one or more movies; a movie has exactly one studio
+studio ||--|{ movie : "produces"
+
+' Movie <-> Genre (M:N) via ClassifiedAs
+movie ||--|{ classified
+genre ||--|{ classified
+
+' Movie <-> Actor (M:N) via ActsIn, with role attribute
+movie ||--|{ actsin
+actor ||--|{ actsin
+
+' Movie <-> Director (M:N) via Directs
+movie ||--|{ directs
+director ||--|{ directs
+
+' Movie has zero or more quotes
+movie ||--o{ quote : "has"
+
+' Each quote is spoken by one actor
+actor ||--o{ quote : "speaks"
+
+note bottom of director
+  A director may also act in a movie
+  (modeled through the ActsIn relationship,
+  not necessarily a movie they direct).
+end note
+
+note top of movie
+  Identified by (title + year).
+  Has one or more genres, directors,
+  and actors; exactly one studio.
+end note
+
+@enduml
+```
