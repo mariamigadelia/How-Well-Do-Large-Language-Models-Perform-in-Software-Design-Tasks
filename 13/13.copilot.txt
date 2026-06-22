@@ -1,0 +1,43 @@
+@startuml
+
+abstract class Event {
+}
+
+class ConcertEvent {
+}
+
+class TheatricalEvent {
+}
+
+abstract class Venue {
+}
+
+class OpenVenue {
+}
+
+class ClosedVenue {
+}
+
+class Seat {
+  -number
+}
+
+class Section {
+  -type
+}
+
+class Show {
+  -date
+  -time
+}
+
+Event <|-- ConcertEvent
+Event <|-- TheatricalEvent
+Venue <|-- OpenVenue
+Venue <|-- ClosedVenue
+Venue "1" -- "many" Seat
+Seat "many" -- "1" Section
+Event "1" -- "many" Show
+Event "1" -- "1" Venue
+
+@enduml

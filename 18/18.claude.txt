@@ -1,0 +1,49 @@
+
+```plantuml
+@startuml
+
+class Artist {
+  name
+  phoneNumber
+  ID
+  email
+  address
+  gender
+}
+
+class Membership {
+  ID
+  startDate
+  endDate
+  rewardPoints
+}
+
+class IndividualMembership {
+}
+
+class AgencyMembership {
+}
+
+class AgencyAffiliateMembership {
+}
+
+class Artwork {
+  title
+  description
+  category
+  price
+}
+
+class Auction {
+}
+
+Artist "1" -- "1" Membership
+Artist "1" -- "0..*" Artwork
+Artwork "0..*" -- "0..*" Auction
+
+Membership <|-- IndividualMembership
+Membership <|-- AgencyMembership
+Membership <|-- AgencyAffiliateMembership
+
+@enduml
+```

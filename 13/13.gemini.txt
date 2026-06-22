@@ -1,0 +1,44 @@
+@startuml
+
+abstract class Event {
+}
+
+class ConcertEvent extends Event {
+}
+
+class TheatricalEvent extends Event {
+}
+
+abstract class Venue {
+}
+
+class OpenVenue extends Venue {
+}
+
+class ClosedVenue extends Venue {
+}
+
+class Seat {
+    number
+}
+
+enum SectionType {
+    parquet_center
+    balcony_center
+    others
+}
+
+class Section {
+    type
+}
+
+class Show {
+    date
+}
+
+Event "1" -- "*" Show
+Venue "1" -- "*" Show
+Venue "1" *-- "*" Section
+Section "1" *-- "*" Seat
+
+@endum

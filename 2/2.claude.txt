@@ -1,0 +1,114 @@
+
+```plantuml
+@startuml Steam Boiler Class Diagram
+
+class SteamBoilerSystem {
+  - state : SystemState
+  - waterTolerance : double
+  + startOperation() : void
+  + monitor() : void
+  + maintainWaterLevel() : void
+  + handOverToOperator() : void
+  + stop() : void
+  + isSafeOperationPossible() : boolean
+}
+
+enum SystemState {
+  INITIALIZING
+  NORMAL
+  DEGRADED
+  RESCUE
+  EMERGENCY_STOP
+}
+
+class SteamBoiler {
+  - capacity : double
+  - currentWaterAmount : double
+  - currentSteamAmount : double
+  + isWithinTolerance() : boolean
+}
+
+class Turbine {
+  - status : String
+  + drive(steam : double) : void
+}
+
+abstract class MeasuringDevice {
+  - isOperational : boolean
+  + readValue() : double
+  + checkStatus() : boolean
+}
+
+class WaterLevelMeasuringDevice {
+  - waterLevel : double
+  + measureWaterLevel() : double
+}
+
+class SteamMeasuringDevice {
+  - steamOutput : double
+  + measureSteam() : double
+}
+
+class PumpStatusMeasuringDevice {
+  - pumpState : boolean
+  + measurePumpStatus() : boolean
+}
+
+class Pump {
+  - isRunning : boolean
+  - flowRate : double
+  + startPump() : void
+  + stopPump() : void
+  + provideWater() : void
+}
+
+class OperatorDesk {
+  - hasControl : boolean
+  + displayStatus(info : String) : void
+  + takeControl() : void
+  + stopSystem() : void
+}
+
+class MessageTransmissionSystem {
+  + sendSignal(signal : String) : void
+  + receiveSignal() : String
+  + transmitStatus(info : String) : void
+}
+
+' ---- Relationships ----
+
+SteamBoilerSystem "1" *-- "1" SteamBoiler : controls >
+SteamBoilerSystem "1" *-- "1" Pump : controls >
+SteamBoilerSystem "1" *-- "1" OperatorDesk : reports to >
+SteamBoilerSystem "1" *-- "1" MessageTransmissionSystem : uses >
+SteamBoilerSystem "1" *-- "1..*" MeasuringDevice : monitors with >
+SteamBoilerSystem ..> SystemState : has state >
+
+SteamBoiler "1" --> "1" Turbine : drives via steam >
+
+Pump "1" -- "1" PumpStatusMeasuringDevice : monitored by >
+SteamBoiler "1" -- "1" WaterLevelMeasuringDevice : monitored by >
+SteamBoiler "1" -- "1" SteamMeasuringDevice : monitored by >
+
+MeasuringDevice <|-- WaterLevelMeasuringDevice
+MeasuringDevice <|-- SteamMeasuringDevice
+MeasuringDevice <|-- PumpStatusMeasuringDevice
+
+OperatorDesk ..> MessageTransmissionSystem : sends/receives signals >
+
+note top of SteamBoilerSystem
+  Operates safely only if the water amount
+  never exceeds the tolerance.
+  Can still monitor with some devices broken
+  (DEGRADED / RESCUE mode).
+  Hands control to operator when no safe
+  operation is possible.
+end note
+
+note right of OperatorDesk
+  The operator can stop the
+  system at any time.
+end note
+
+@enduml
+```

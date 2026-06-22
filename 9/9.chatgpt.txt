@@ -1,0 +1,92 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+'========================
+' Core Entities
+'========================
+class Movie {
+    -title : String
+    -year : Integer
+    -lengthMinutes : Integer
+    -plotOutline : String
+}
+
+class Studio {
+    -name : String
+    -address : String
+}
+
+class Genre {
+    -name : String
+}
+
+class Person {
+    -name : String
+    -dateOfBirth : Date
+}
+
+class Actor
+class Director
+
+Person <|-- Actor
+Person <|-- Director
+
+class Quote {
+    -text : String
+}
+
+'========================
+' Associative Entities
+'========================
+class ActingRole {
+    -role : String
+}
+
+'========================
+' Relationships
+'========================
+
+' Studios produce movies
+Studio "1" -- "1..*" Movie : produces >
+
+' Movies belong to one or more genres
+Movie "1..*" -- "1..*" Genre : classified as >
+
+' Directors direct movies
+Director "1..*" -- "1..*" Movie : directs >
+
+' Actors act in movies with a role
+Actor "1" -- "1..*" ActingRole
+Movie "1" -- "1..*" ActingRole
+
+' Quotes belong to a movie and are spoken by an actor
+Movie "1" -- "0..*" Quote : contains >
+Actor "1" -- "0..*" Quote : speaks >
+
+note right of Quote
+The speaking actor
+must act in the movie
+containing the quote.
+end note
+
+note bottom of Person
+A person may be both
+an Actor and a Director.
+end note
+
+note top of Movie
+Primary Key:
+(title, year)
+end note
+
+note top of Studio
+Primary Key:
+name
+end note
+
+note top of Person
+Primary Key:
+(name, dateOfBirth)
+end note
+
+@enduml

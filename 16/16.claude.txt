@@ -1,0 +1,65 @@
+
+```plantuml
+@startuml
+
+class User {
+  ID
+  email
+  phoneNumber
+}
+
+class Driver {
+}
+
+class Customer {
+}
+
+class Trip {
+  departureStation
+  arrivalStation
+  numberOfSeats
+  departureDate
+  departureTime
+  arrivalTime
+  price
+}
+
+class DirectTrip {
+}
+
+class IndirectTrip {
+}
+
+class MembershipPackage {
+}
+
+class Reward {
+}
+
+class Cashback {
+}
+
+class Discount {
+}
+
+class Points {
+}
+
+User <|-- Driver
+User <|-- Customer
+
+Driver "1" -- "0..*" Trip
+Customer "0..*" -- "0..*" Trip
+
+User "0..*" -- "0..*" MembershipPackage
+MembershipPackage "1" -- "1..*" Reward
+
+Trip <|-- DirectTrip
+Trip <|-- IndirectTrip
+
+Reward <|-- Cashback
+Reward <|-- Discount
+Reward <|-- Points
+
+@enduml
+```

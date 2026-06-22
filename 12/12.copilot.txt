@@ -1,0 +1,37 @@
+@startuml
+
+class Company {
+  -name
+}
+
+abstract class Employee {
+  -name
+  -type
+}
+
+class PartTimeEmployee {
+}
+
+class FullTimeEmployee {
+}
+
+abstract class Vehicle {
+  -registrationNumber
+  -vehicleType
+}
+
+class OwnedVehicle {
+}
+
+class RentedVehicle {
+}
+
+Company "1" -- "many" Employee
+Company "1" -- "many" Vehicle
+Employee <|-- PartTimeEmployee
+Employee <|-- FullTimeEmployee
+Vehicle <|-- OwnedVehicle
+Vehicle <|-- RentedVehicle
+Employee "many" -- "many" Vehicle : drives
+
+@enduml

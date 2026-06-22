@@ -1,0 +1,53 @@
+
+```plantuml
+@startuml
+
+class Customer {
+}
+
+class Order {
+  status
+}
+
+class ItemLine {
+  quantity
+}
+
+class LibraryItem {
+  status
+}
+
+class BookItem {
+}
+
+class DigitalItem {
+  option
+}
+
+class EBookFormat {
+}
+
+class PrintFormat {
+}
+
+class AudioItem {
+}
+
+class VideoItem {
+}
+
+Customer "1" -- "0..*" Order
+Order "1" *-- "1..*" ItemLine
+ItemLine "0..*" -- "1" LibraryItem
+
+LibraryItem <|-- BookItem
+LibraryItem <|-- DigitalItem
+
+BookItem <|-- EBookFormat
+BookItem <|-- PrintFormat
+
+DigitalItem <|-- AudioItem
+DigitalItem <|-- VideoItem
+
+@enduml
+```

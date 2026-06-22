@@ -1,0 +1,34 @@
+@startuml
+
+class University
+
+class Student {
+  name
+  ID
+  status
+}
+
+class Course
+
+class ResearchBasedCourse
+class ProjectBasedCourse
+
+class Enrollment
+
+class DropPolicy
+
+University "1" -- "0..*" Student
+Student <|-- PartTimeStudent
+Student <|-- FullTimeStudent
+
+Student "1" -- "0..5" Course
+
+Course <|-- ResearchBasedCourse
+Course <|-- ProjectBasedCourse
+
+Student "1" -- "0..*" Enrollment
+Course "1" -- "0..*" Enrollment
+
+Enrollment "1" -- "0..1" DropPolicy
+
+@enduml

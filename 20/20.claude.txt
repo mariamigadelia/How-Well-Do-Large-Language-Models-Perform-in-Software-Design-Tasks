@@ -1,0 +1,35 @@
+
+```plantuml
+@startuml
+
+class Map {
+  scale
+  name
+  latitude
+  longitude
+  height
+  width
+}
+
+class Feature {
+  name
+  featureType
+}
+
+class CurveFeature {
+}
+
+class PointFeature {
+}
+
+class RegionFeature {
+}
+
+Map "1" *-- "1..*" Feature
+
+Feature <|-- CurveFeature
+Feature <|-- PointFeature
+Feature <|-- RegionFeature
+
+@enduml
+```

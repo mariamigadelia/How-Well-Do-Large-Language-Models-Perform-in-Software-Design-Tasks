@@ -1,0 +1,44 @@
+@startuml
+
+class Auction {
+  auctionNumber
+  startTime
+  endTime
+  biddingRules
+}
+
+class Bid {
+  bidID
+  bidAmount
+  timestamp
+}
+
+class User {
+  userID
+  username
+  profile
+  biddingHistory
+}
+
+class Item {
+  itemID
+  name
+  description
+  currentBiddingStatus
+}
+
+class Seller {
+  sellerID
+  name
+}
+
+User "1" -- "0..*" Bid
+Auction "1" -- "0..*" Bid
+Item "1" -- "0..*" Bid
+
+Auction "1" -- "0..*" Item
+Seller "1" -- "0..*" Item
+
+User "1" -- "0..*" Auction
+
+@enduml

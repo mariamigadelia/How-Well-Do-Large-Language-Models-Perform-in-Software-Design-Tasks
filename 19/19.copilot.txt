@@ -1,0 +1,36 @@
+@startuml
+
+abstract class Student {
+  -name
+  -email
+  -studentId
+  -category
+}
+
+class UndergraduateStudent {
+}
+
+class GraduateStudent {
+}
+
+abstract class Project {
+  -title
+  -description
+  -startDate
+  -deadline
+  -grade
+}
+
+class ResearchProject {
+}
+
+class CourseBasedProject {
+}
+
+Student <|-- UndergraduateStudent
+Student <|-- GraduateStudent
+Project <|-- ResearchProject
+Project <|-- CourseBasedProject
+Student "1" -- "many" Project
+
+@enduml

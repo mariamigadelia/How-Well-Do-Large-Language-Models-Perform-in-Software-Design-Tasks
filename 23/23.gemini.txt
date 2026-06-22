@@ -1,0 +1,37 @@
+@startuml
+
+class SocialMediaPlatform {
+}
+
+class User {
+    user_id
+    username
+    profile_picture
+    customizable_settings
+}
+
+class Post {
+    post_id
+    content
+    timestamp
+}
+
+class Comment {
+    comment_id
+    content
+    timestamp
+}
+
+class Like {
+    id
+}
+
+SocialMediaPlatform "1" *-- "*" User
+SocialMediaPlatform "1" *-- "*" Post
+User "1" -- "*" Post
+User "1" -- "*" Comment
+User "1" -- "*" Like
+Post "1" *-- "*" Comment
+Post "1" *-- "*" Like
+
+@endum

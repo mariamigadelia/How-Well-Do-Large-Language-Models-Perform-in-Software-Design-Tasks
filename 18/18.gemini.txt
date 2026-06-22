@@ -1,0 +1,43 @@
+@startuml
+
+class OnlineArtGallerySystem {
+}
+
+class Artist {
+    name
+    phone_number
+    id
+    email
+    address
+    gender
+}
+
+abstract class Membership {
+    id
+    start_date
+    end_date
+    reward_points
+}
+
+class IndividualMembership extends Membership {
+}
+
+class AgencyMembership extends Membership {
+}
+
+class AgencyAffiliateMembership extends Membership {
+}
+
+class Artwork {
+    title
+    description
+    category
+    price
+}
+
+OnlineArtGallerySystem "1" *-- "*" Artist
+OnlineArtGallerySystem "1" *-- "*" Artwork
+Artist "1" -- "1" Membership
+Artist "1" -- "*" Artwork
+
+@endum

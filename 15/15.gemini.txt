@@ -1,0 +1,37 @@
+@startuml
+
+class University {
+}
+
+abstract class Student {
+    name
+    id
+    status
+}
+
+class PartTimeStudent extends Student {
+}
+
+class FullTimeStudent extends Student {
+}
+
+abstract class Course {
+}
+
+class ResearchBasedCourse extends Course {
+}
+
+class ProjectBasedCourse extends Course {
+}
+
+class Enrollment {
+    is_dropped
+    drop_week
+}
+
+University "1" -- "*" Student
+University "1" -- "*" Course
+Student "1" -- "0..5" Enrollment
+Course "1" -- "*" Enrollment
+
+@endum

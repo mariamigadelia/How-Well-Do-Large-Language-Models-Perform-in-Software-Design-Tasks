@@ -1,0 +1,72 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam monochrome true
+skinparam shadowing false
+
+class BoilerController {
+    - maxWaterTolerance: Double
+    - minWaterTolerance: Double
+    - isSafeOperation: Boolean
+    + monitorSystem(): void
+    + handleDegradedMode(): void
+    + emergencyStop(): void
+}
+
+class SteamBoiler {
+    - currentWaterLevel: Double
+    - currentSteamOutput: Double
+    + operational(): Boolean
+}
+
+abstract class SystemDevice {
+    - isBroken: Boolean
+    + getStatus(): Boolean
+}
+
+class WaterLevelSensor {
+    + readWaterLevel(): Double
+}
+
+class SteamSensor {
+    + readSteamVolume(): Double
+}
+
+class PumpStatusSensor {
+    + isPumpActive(): Boolean
+}
+
+class WaterPump {
+    - isOpen: Boolean
+    + turnOn(): void
+    + turnOff(): void
+}
+
+class OperatorDesk {
+    - systemStoppedByOperator: Boolean
+    + displayStatus(message: String): void
+    + takeManualControl(): void
+    + requestStop(): void
+}
+
+class MessageTransmissionSystem {
+    + transmitSignal(signal: String, destination: String): void
+}
+
+' Inheritance for devices and sensors
+SystemDevice <|-- WaterLevelSensor
+SystemDevice <|-- SteamSensor
+SystemDevice <|-- PumpStatusSensor
+SystemDevice <|-- WaterPump
+
+' Relationships and associations
+BoilerController "1" *-- "1" SteamBoiler : monitors >
+BoilerController "1" *-- "1" WaterLevelSensor : reads >
+BoilerController "1" *-- "1" SteamSensor : reads >
+BoilerController "1" *-- "1" PumpStatusSensor : reads >
+BoilerController "1" *-- "1" WaterPump : controls >
+
+BoilerController "1" --> "1" OperatorDesk : sends status / hands over to >
+BoilerController "1" ..> MessageTransmissionSystem : uses to route signals >
+
+
+@endum()

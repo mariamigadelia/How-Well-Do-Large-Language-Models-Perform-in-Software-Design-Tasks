@@ -1,0 +1,6 @@
+The library lends items to customers. Each customer is registered as a member and receives a membership card with a unique membership number. The library stores information about each member, including their name, address, and date of birth.
+The library is divided into several subject sections, and each section is identified by a classification mark.
+Every loan item has a unique barcode. There are two types of loan items: books and language tapes. A language tape has a title language, such as French, and a level, such as beginner. A book has a title and one or more authors.
+A member can borrow a maximum of eight items at a time. An item may be borrowed, reserved, or renewed to extend the loan period.
+When issuing an item, the member's number is entered either by scanning the membership card barcode or by typing the number manually. If the membership is valid and the member currently has fewer than eight items on loan, the barcode of the item is scanned or entered manually. If the item is available and not reserved by another member, it is stamped and issued to the member.
+The library system must also allow users to search for items and perform daily updates of records.

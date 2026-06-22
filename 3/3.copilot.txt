@@ -1,0 +1,37 @@
+@startuml
+
+class WhoisServer {
+  -port : int = 43
+  +listen()
+  +reply(request : String) : String
+  +closeConnection()
+}
+
+class WhoisClient {
+  +sendRequest(request : String)
+  +receiveResponse() : String
+}
+
+class Request {
+  -content : String
+  -terminator : String = "CRLF"
+}
+
+class Response {
+  -content : List<String>
+  +isComplete() : boolean
+}
+
+class Connection {
+  -status : String // open, closed
+  +open()
+  +close()
+}
+
+WhoisClient "1" -- "1" Connection
+WhoisServer "1" -- "1" Connection
+WhoisClient --> Request
+WhoisServer --> Response
+WhoisClient ..> WhoisServer : TCP communication
+
+@enduml

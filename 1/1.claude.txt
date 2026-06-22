@@ -1,0 +1,80 @@
+
+```plantuml
+@startuml Library Class Diagram
+
+class Library {
+  - name : String
+  + searchItem(criteria : String) : LoanItem
+  + dailyUpdate() : void
+  + issueItem(memberNo : int, barCode : String) : void
+}
+
+class Section {
+  - classificationMark : String
+  - subjectName : String
+  + addItem(item : LoanItem) : void
+}
+
+class Member {
+  - memberNumber : int
+  - name : String
+  - address : String
+  - dateOfBirth : Date
+  - itemsOnLoan : int
+  + isValid() : boolean
+  + canBorrow() : boolean
+}
+
+class MembershipCard {
+  - memberNumber : int
+  + scan() : int
+}
+
+abstract class LoanItem {
+  - barCode : String
+  - isReserved : boolean
+  - isOnLoan : boolean
+  + borrow() : void
+  + reserve() : void
+  + renew() : void
+  + stamp() : void
+  + canBeIssued() : boolean
+}
+
+class LanguageTape {
+  - title : String
+  - language : String
+  - level : String
+}
+
+class Book {
+  - title : String
+  - authors : List<String>
+}
+
+' ---- Relationships ----
+
+Library "1" *-- "1..*" Section : is made up of >
+
+Section "1" o-- "0..*" LoanItem : contains >
+
+Member "1" --> "1" MembershipCard : is issued >
+
+Member "1" -- "0..8" LoanItem : borrows >
+
+LoanItem <|-- LanguageTape
+LoanItem <|-- Book
+
+note right of Member
+  A member may borrow a
+  maximum of 8 items.
+  Constraint: itemsOnLoan <= 8
+end note
+
+note bottom of LoanItem
+  Uniquely identified by bar code.
+  Can be borrowed, reserved or renewed.
+end note
+
+@enduml
+```

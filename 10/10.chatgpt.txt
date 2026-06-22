@@ -1,0 +1,44 @@
+@startuml
+
+class Animal {
+  ID
+  name
+}
+
+class Owner {
+  ID
+  name
+  address
+  phoneNumber
+}
+
+class Breed {
+}
+
+class Appointment {
+  dateTime
+}
+
+class Physician {
+  ID
+  name
+  address
+  phoneNumber
+}
+
+class Condition {
+  commonName
+  scientificName
+}
+
+Owner "0..1" -- "0..*" Animal
+Breed "1" -- "0..*" Animal
+
+Animal "1" -- "0..*" Appointment
+Physician "1" -- "0..*" Appointment
+
+Appointment "0..*" -- "0..*" Condition
+
+Breed "0..*" -- "0..*" Condition
+
+@enduml

@@ -1,0 +1,41 @@
+@startuml
+
+class Artist {
+  -name
+  -phone
+  -id
+  -email
+  -address
+  -gender
+}
+
+abstract class Membership {
+  -id
+  -startDate
+  -endDate
+  -rewardPoints
+}
+
+class IndividualMembership {
+}
+
+class AgencyMembership {
+}
+
+class AgencyAffiliateMembership {
+}
+
+class Artwork {
+  -title
+  -description
+  -category
+  -price
+}
+
+Artist "1" -- "1" Membership
+Artist "1" -- "many" Artwork
+Membership <|-- IndividualMembership
+Membership <|-- AgencyMembership
+Membership <|-- AgencyAffiliateMembership
+
+@enduml

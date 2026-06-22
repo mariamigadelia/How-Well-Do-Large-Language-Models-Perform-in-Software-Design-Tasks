@@ -1,0 +1,35 @@
+@startuml
+
+class Location {
+  locationID
+  coordinate
+  name
+  geographicalDescription
+}
+
+class WeatherData {
+  temperature
+  humidity
+  windSpeed
+  precipitation
+  timestamp
+}
+
+class Sensor {
+  sensorID
+  name
+  type
+  calibrationDetails
+}
+
+class Forecast {
+  forecastID
+  forecastData
+  timestamp
+}
+
+Location "1" -- "0..*" WeatherData
+Sensor "1" -- "0..*" WeatherData
+Location "1" -- "0..*" Forecast
+
+@enduml

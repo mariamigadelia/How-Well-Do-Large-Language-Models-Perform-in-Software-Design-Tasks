@@ -1,0 +1,38 @@
+
+```plantuml
+@startuml
+
+class Flight {
+  flightNumber
+  departureTime
+  arrivalTime
+  seatAvailability
+}
+
+class Reservation {
+  reservationID
+  checkInDate
+  checkOutDate
+  passengerProfile
+}
+
+class Passenger {
+  passengerID
+  name
+  contactInformation
+  orderHistory
+}
+
+class Ticket {
+}
+
+class Payment {
+}
+
+Passenger "1" -- "0..*" Reservation
+Reservation "0..*" -- "1" Flight
+Reservation "1" -- "1..*" Ticket
+Reservation "1" -- "1" Payment
+
+@enduml
+```

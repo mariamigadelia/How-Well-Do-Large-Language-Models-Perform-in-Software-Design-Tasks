@@ -1,0 +1,42 @@
+@startuml
+
+class CarRentalSystem {
+}
+
+class Vehicle {
+    vehicle_id
+    make
+    model
+    rental_rates
+    status
+    maintenance_schedule
+}
+
+class RentalTransaction {
+    transaction_id
+    rental_duration
+}
+
+class Customer {
+    customer_id
+    name
+    contact_information
+    rental_history
+}
+
+class MaintenanceRecord {
+    maintenance_id
+    date
+    type
+    description
+}
+
+CarRentalSystem "1" *-- "*" Vehicle
+CarRentalSystem "1" *-- "*" Customer
+CarRentalSystem "1" *-- "*" RentalTransaction
+CarRentalSystem "1" *-- "*" MaintenanceRecord
+Customer "1" -- "*" RentalTransaction
+Vehicle "1" -- "*" RentalTransaction
+Vehicle "1" *-- "*" MaintenanceRecord
+
+@endum

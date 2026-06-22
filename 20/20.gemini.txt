@@ -1,0 +1,32 @@
+ @startuml
+
+class MapSystem {
+}
+
+class Map {
+    scale
+    name
+    top_left_latitude
+    top_left_longitude
+    height_meters
+    width_meters
+}
+
+abstract class Feature {
+    name
+    feature_type
+}
+
+class CurveFeature extends Feature {
+}
+
+class PointFeature extends Feature {
+}
+
+class RegionFeature extends Feature {
+}
+
+MapSystem "1" *-- "*" Map
+Map "1" *-- "*" Feature
+
+@endum

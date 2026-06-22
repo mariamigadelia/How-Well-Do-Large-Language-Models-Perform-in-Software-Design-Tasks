@@ -1,0 +1,63 @@
+@startuml
+
+class RealEstateAgency {
+}
+
+class Property {
+    property_id
+    type
+    location
+    description
+    price
+}
+
+class Seller {
+}
+
+class Agent {
+    agent_id
+    name
+    contact_information
+}
+
+class User {
+    user_id
+    name
+    contact_information
+}
+
+class Listing {
+    listing_id
+    listing_date
+}
+
+class Inquiry {
+}
+
+class Viewing {
+    scheduled_date_time
+}
+
+class TransactionRecord {
+    transaction_id
+    transaction_date
+    audit_trail
+}
+
+RealEstateAgency "1" *-- "*" Property
+RealEstateAgency "1" *-- "*" Agent
+RealEstateAgency "1" *-- "*" User
+RealEstateAgency "1" *-- "*" Listing
+RealEstateAgency "1" *-- "*" TransactionRecord
+
+Property "1" -- "1" Seller
+Agent "1" -- "*" Listing
+Property "1" -- "1" Listing
+User "1" -- "*" Inquiry
+Listing "1" -- "*" Inquiry
+User "1" -- "*" Viewing
+Listing "1" -- "*" Viewing
+Property "1" -- "*" TransactionRecord
+User "1" -- "*" TransactionRecord
+
+@endum

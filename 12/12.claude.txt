@@ -1,0 +1,42 @@
+
+```plantuml
+@startuml
+
+class Company {
+  name
+}
+
+class Employee {
+  name
+  type
+}
+
+class PartTimeEmployee {
+}
+
+class FullTimeEmployee {
+}
+
+class Vehicle {
+  registrationNumber
+  vehicleType
+}
+
+class OwnedVehicle {
+}
+
+class RentedVehicle {
+}
+
+Company "1" -- "0..*" Employee
+Company "1" -- "0..*" Vehicle
+Employee "0..*" -- "0..*" Vehicle
+
+Employee <|-- PartTimeEmployee
+Employee <|-- FullTimeEmployee
+
+Vehicle <|-- OwnedVehicle
+Vehicle <|-- RentedVehicle
+
+@enduml
+```

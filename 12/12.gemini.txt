@@ -1,0 +1,33 @@
+@startuml
+
+class Company {
+    name
+}
+
+abstract class Employee {
+    name
+    type
+}
+
+class PartTimeEmployee extends Employee {
+}
+
+class FullTimeEmployee extends Employee {
+}
+
+abstract class Vehicle {
+    registration_number
+    vehicle_type
+}
+
+class OwnedVehicle extends Vehicle {
+}
+
+class RentedVehicle extends Vehicle {
+}
+
+Company "1" *-- "*" Employee
+Company "1" *-- "*" Vehicle
+Employee "1" -- "1" Vehicle : drives
+
+@endum

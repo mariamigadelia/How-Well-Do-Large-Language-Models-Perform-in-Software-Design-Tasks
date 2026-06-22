@@ -1,0 +1,36 @@
+@startuml
+
+class AutomatedLibrarySystem {
+}
+
+class Book {
+    title
+    barcode
+    ISBN
+    number_of_pages
+}
+
+abstract class User {
+    name
+    email
+    address
+    id
+}
+
+class MemberUser extends User {
+}
+
+class GuestUser extends User {
+}
+
+class Loan {
+    start_date
+    end_date
+}
+
+AutomatedLibrarySystem "1" *-- "*" Book
+AutomatedLibrarySystem "1" *-- "*" User
+User "1" -- "*" Loan
+Book "1" -- "0..1" Loan
+
+@endum

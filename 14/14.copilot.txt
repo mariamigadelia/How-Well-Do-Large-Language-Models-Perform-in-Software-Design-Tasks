@@ -1,0 +1,56 @@
+@startuml
+
+class Customer {
+}
+
+class Order {
+  -status
+}
+
+class ItemLine {
+  -quantity
+}
+
+abstract class LibraryItem {
+  -status
+}
+
+class BookItem {
+  -format
+}
+
+class DigitalItem {
+  -option
+}
+
+class AudioItem {
+}
+
+class VideoItem {
+}
+
+Customer "1" -- "many" Order
+Order "1" -- "many" ItemLine
+ItemLine "1" -- "1" LibraryItem
+LibraryItem <|-- BookItem
+LibraryItem <|-- DigitalItem
+BookItem <|-- eBookFormat
+BookItem <|-- PrintFormat
+DigitalItem <|-- AudioItem
+DigitalItem <|-- VideoItem
+DigitalItem "1" -- "1" Downloadable
+DigitalItem "1" -- "1" Disc
+
+class eBookFormat {
+}
+
+class PrintFormat {
+}
+
+class Downloadable {
+}
+
+class Disc {
+}
+
+@enduml

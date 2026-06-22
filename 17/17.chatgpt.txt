@@ -1,0 +1,31 @@
+@startuml
+
+class Book {
+  title
+  barcode
+  ISBN
+  numberOfPages
+}
+
+class User {
+  name
+  email
+  address
+  ID
+}
+
+class MemberUser
+class GuestUser
+
+class Loan {
+  startDate
+  endDate
+}
+
+User <|-- MemberUser
+User <|-- GuestUser
+
+User "1" -- "0..*" Loan
+Book "1" -- "0..*" Loan
+
+@enduml

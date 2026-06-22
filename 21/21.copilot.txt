@@ -1,0 +1,27 @@
+@startuml
+
+class Patient {
+  -id
+  -biodata
+  -medicalHistory
+  -diagnoses
+  -treatmentPlans
+  -appointmentSchedules
+}
+
+class Physician {
+  -physicianId
+  -name
+  -contactDetails
+}
+
+class Appointment {
+  -appointmentId
+  -date
+  -time
+}
+
+Patient "1" -- "many" Appointment : attends
+Physician "1" -- "many" Appointment : responsible
+
+@enduml
