@@ -1,6 +1,6 @@
-# LLMs Can Code, But Can They Do Design?
+# How Well Do Large Language Models Perform in Software Design Tasks
 
-This repository contains the experimental data and results for the thesis **"LLMs Can Code, But Can They Do Design?"**. The purpose of this study is to evaluate the ability of Large Language Models (LLMs) to generate correct UML class diagrams from textual software requirements.
+This repository contains the experimental data and results for the thesis **"How Well Do Large Language Models Perform in Software Design Tasks"**. The purpose of this study is to evaluate the ability of Large Language Models (LLMs) to generate correct UML class diagrams from textual software requirements.
 
 ## Authors
 
@@ -123,7 +123,7 @@ OVS = Number of Extra Elements /
 
 This repository accompanies the thesis:
 
-> **LLMs Can Code, But Can They Do Design?**
+> **How Well Do Large Language Models Perform in Software Design Tasks**
 
 and contains:
 
