@@ -1,0 +1,227 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+class ConsortiumNetwork {
+  +routeTransaction(request: TransactionRequest): TransactionResult
+  +clearTransaction(request: TransactionRequest): TransactionResult
+  +calculateBankCharges(): CostReport
+}
+
+class CentralComputer {
+  -banks: List<BankGateway>
+  -auditLog: AuditLog
+  -securityService: SecurityService
+  +authenticateCard(card: CashCard, pin: String): boolean
+  +authorizeTransaction(request: TransactionRequest): TransactionResult
+  +routeToBank(request: TransactionRequest): TransactionResult
+}
+
+class ATM {
+  -atmId: String
+  -location: String
+  -cashAvailable: Money
+  +acceptCard(card: CashCard)
+  +readPIN(): String
+  +selectTransaction(): TransactionType
+  +dispenseCash(amount: Money)
+  +printReceipt(receipt: Receipt)
+  +ejectCard()
+}
+
+class ATMController {
+  +startSession(card: CashCard)
+  +performTransaction(request: TransactionRequest): TransactionResult
+  +endSession()
+}
+
+class UserInterface {
+  +displayMessage(message: String)
+  +readInput(): String
+}
+
+class CashDispenser {
+  +dispense(amount: Money)
+  +hasSufficientCash(amount: Money): boolean
+}
+
+class CardReader {
+  +readCard(): CashCard
+  +ejectCard()
+}
+
+class ReceiptPrinter {
+  +print(receipt: Receipt)
+}
+
+class CashCard {
+  -cardNumber: String
+  -expiryDate: Date
+  -bankId: String
+  -customerId: String
+  -status: CardStatus
+}
+
+class Customer {
+  -customerId: String
+  -name: String
+}
+
+class Bank {
+  -bankId: String
+  -name: String
+  +getNumberOfCardCustomers(): int
+}
+
+class BankComputer {
+  +processTransaction(request: TransactionRequest): TransactionResult
+  +lockAccount(accountNumber: String)
+  +unlockAccount(accountNumber: String)
+}
+
+class BankGateway {
+  -bankId: String
+  +sendRequest(request: TransactionRequest): TransactionResult
+}
+
+class CashierStation {
+  -stationId: String
+  +enterTransactionData()
+  +sendToOwnBank(request: TransactionRequest)
+}
+
+class Cashier {
+  -employeeId: String
+  -name: String
+}
+
+class Account {
+  -accountNumber: String
+  -balance: Money
+  +debit(amount: Money)
+  +credit(amount: Money)
+  +getBalance(): Money
+}
+
+class TransactionRequest {
+  -transactionId: String
+  -cardNumber: String
+  -accountNumber: String
+  -bankId: String
+  -type: TransactionType
+  -amount: Money
+  -timestamp: DateTime
+}
+
+class TransactionResult {
+  -approved: boolean
+  -message: String
+  -authorizationCode: String
+  -newBalance: Money
+}
+
+class TransactionRecord {
+  -transactionId: String
+  -timestamp: DateTime
+  -status: TransactionStatus
+}
+
+class Receipt {
+  -receiptId: String
+  -transactionId: String
+  -message: String
+}
+
+class AuditLog {
+  +recordTransaction(record: TransactionRecord)
+  +recordSecurityEvent(event: SecurityEvent)
+}
+
+class SecurityService {
+  +validatePIN(card: CashCard, pin: String): boolean
+  +encrypt(data: String): String
+  +verifyCardStatus(card: CashCard): boolean
+}
+
+class AccountLockManager {
+  +lock(accountNumber: String)
+  +unlock(accountNumber: String)
+}
+
+class CostApportionmentService {
+  +calculateShare(bank: Bank): Money
+}
+
+enum TransactionType {
+  WITHDRAWAL
+  DEPOSIT
+  TRANSFER
+  BALANCE_INQUIRY
+}
+
+enum TransactionStatus {
+  PENDING
+  APPROVED
+  DECLINED
+  FAILED
+}
+
+enum CardStatus {
+  ACTIVE
+  BLOCKED
+  EXPIRED
+}
+
+class Money
+
+ConsortiumNetwork *-- CentralComputer
+ConsortiumNetwork o-- CostApportionmentService
+CentralComputer o-- BankGateway
+CentralComputer *-- AuditLog
+CentralComputer *-- SecurityService
+CentralComputer *-- AccountLockManager
+
+ATM *-- ATMController
+ATM *-- UserInterface
+ATM *-- CardReader
+ATM *-- CashDispenser
+ATM *-- ReceiptPrinter
+ATMController --> CentralComputer
+ATMController --> TransactionRequest
+ATMController --> TransactionResult
+
+CardReader --> CashCard
+CashCard --> Customer
+CashCard --> Bank
+
+Bank "1" *-- BankComputer
+BankComputer "1" o-- Account
+BankComputer --> AccountLockManager
+BankGateway --> BankComputer
+
+CashierStation --> BankComputer
+Cashier --> CashierStation
+
+TransactionRequest --> TransactionType
+TransactionRecord --> TransactionStatus
+TransactionResult --> Receipt
+AuditLog --> TransactionRecord
+
+CostApportionmentService --> Bank
+Bank --> CashCard : card customers
+
+note right of BankComputer
+Bank software is provided
+by each individual bank.
+end note
+
+note bottom of AccountLockManager
+Handles concurrent access
+to the same account.
+end note
+
+note right of CentralComputer
+Routes ATM transactions
+to the correct bank.
+end note
+
+@enduml
