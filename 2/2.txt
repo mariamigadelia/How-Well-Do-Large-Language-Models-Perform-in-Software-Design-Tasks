@@ -1,0 +1,6 @@
+The steam boiler operates safely if the contained amount of water never exceeds a certain tolerance, thus avoiding damage to the steam boiler and the turbine driven by the  produced steam. 
+ Basically, the steam boiler system consists of the steam boiler itself, a measuring device for the water level, a pump to provide the steam boiler with water, a measuring device for  the pump status, a measuring device for the amount of steam produced by the steam boiler, an operator desk, and a message transmission system for the signals produced. 
+ During operation, the water level is kept within the tolerance level as long as possible, using the measuring devices and the pump and producing status information for the operator desk. 
+ But even with some devices broken, the system can still successfully monitor the steam boiler. 
+ If no safe operation is possible any longer, control is handed over to the operator desk. 
+ Additionally, the operator can stop the system at any time via the operator desk. 
